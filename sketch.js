@@ -8,17 +8,33 @@
 //Patience variables for timed orders
 const MAX_PATIENCE = 100;
 
+// food images
+let mediumPatty;
+
+let pickle;
+let cheese;
+let tomato;
+let onion;
+let lettuce;
+
+// sauces
+let bbq;
+let mustard;
+let ketchup;
+let mayo;
+
+// sound effects
 
 class Customer {
   constructor() {
     // can i put generateOrder as this.order...?
     this.order = ;
     this.patience = MAX_PATIENCE;
-
+  
   }
 
   generateOrder() {
-
+    
   }
 }
 
@@ -52,8 +68,36 @@ class Patty {
   }
 }
 
+function preload() {
+  // lots of images all being loaded before they are used
+
+
+
+  // food images
+  onion = loadImage("assets/onion.png");
+  tomato = loadImage("assets/tomato.png");
+  pickle = loadImage("assets/pickle.png");
+  cheese = loadImage("assets/slicedcheese.png");
+  lettuce = loadImage("assets/lettuce.png");
+
+  // patty images
+  rawPatty = loadImage("assets/rawpatty.png");
+  mediumPatty = loadImage("assets/mediumpatty.png");
+  burntPatty = loadImage("assets/burntpatty.png");
+
+  // sauces
+  ketchup = loadImage("assets/ketchup.png");
+  bbq = loadImage("assets/bbq.png");
+  mustard = loadImage("assets/mustard.png");
+  mayo = loadImage("assets/mayo.png");
+
+  
+
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
+
 }
 
 function draw() {
