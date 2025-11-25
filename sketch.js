@@ -8,9 +8,15 @@
 //Patience variables for timed orders
 const MAX_PATIENCE = 100;
 
-// food images
-let mediumPatty;
+//background images
 
+// patties
+let rawPatty;
+let beingCookedPatty;
+let perfectPatty;
+let overcookedPatty;
+
+// toppings
 let pickle;
 let cheese;
 let tomato;
@@ -25,12 +31,12 @@ let mayo;
 
 // sound effects
 
+
 class Customer {
   constructor() {
-    // can i put generateOrder as this.order...?
-    this.order = ;
+    this.order = this.generateOrder();
     this.patience = MAX_PATIENCE;
-  
+    
   }
 
   generateOrder() {
@@ -56,34 +62,38 @@ class Patty {
     if (this.onGrill) {
       cookingTime ++;   // fix these somenumbers
       if (cookingTime < SOMENUMBERHERE) {
-        this.state = "raw"
+        this.state = "raw";
+      }
+      else if (cookingtime > SOMESORTOFNUMBER & cookingtime < SOMENUMBER) {
+        this.state = "beingCooked";
       }
       else if (cookingtime >= SOMENUMBER && cookingTime <= SOMEOTHERNUMBER) {
-        this.state = "cooked"
+        this.state = "perfect";
       }
       else {
-        this.state = "burnt"
+        this.state = "overcooked";
       }
     }
   }
 }
 
 function preload() {
-  // lots of images all being loaded before they are used
+  // images all being loaded before they are used
 
 
-
-  // food images
+  // background images
+  
+  // patties
+  rawPatty = loadImage("assets/rawpatty.png");
+  mediumPatty = loadImage("assets/perfectpatty.png");
+  overcookedPatty = loadImage("assets/overcookedpatty.png");
+  
+  // toppings
   onion = loadImage("assets/onion.png");
   tomato = loadImage("assets/tomato.png");
   pickle = loadImage("assets/pickle.png");
   cheese = loadImage("assets/slicedcheese.png");
   lettuce = loadImage("assets/lettuce.png");
-
-  // patty images
-  rawPatty = loadImage("assets/rawpatty.png");
-  mediumPatty = loadImage("assets/mediumpatty.png");
-  burntPatty = loadImage("assets/burntpatty.png");
 
   // sauces
   ketchup = loadImage("assets/ketchup.png");
@@ -91,7 +101,7 @@ function preload() {
   mustard = loadImage("assets/mustard.png");
   mayo = loadImage("assets/mayo.png");
 
-  
+  // sound effects
 
 }
 
