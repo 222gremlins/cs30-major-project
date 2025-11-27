@@ -10,6 +10,7 @@ const MAX_PATIENCE = 100;
 
 //background images
 
+
 // patties
 let rawPatty;
 let beingCookedPatty;
@@ -102,7 +103,7 @@ function preload() {
   mayo = loadImage("assets/mayo.png");
 
   // sound effects
-
+  
 }
 
 function setup() {
