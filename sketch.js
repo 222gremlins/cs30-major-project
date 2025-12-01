@@ -7,9 +7,14 @@
 
 //Patience variables for timed orders
 const MAX_PATIENCE = 100;
+const BUTTON_WIDTH = 250;
+const BUTTON_HEIGHT = 100;
 
-//background images
+//background images, buttons and icons
+let startImg;
 
+let playButton;
+let tutorialButton;
 
 // patties
 let rawPatty;
@@ -31,6 +36,11 @@ let ketchup;
 let mayo;
 
 // sound effects
+let click;
+let backgroundMusic;
+
+
+let state = "start";
 
 
 class Customer {
@@ -82,8 +92,11 @@ function preload() {
   // images all being loaded before they are used
 
 
-  // background images
-  
+  // background images, icons and buttons
+  startImg = loadImage("assets/intro.png");
+
+  playButton = loadImage("assets/playbutton.png");
+
   // patties
   rawPatty = loadImage("assets/rawpatty.png");
   mediumPatty = loadImage("assets/perfectpatty.png");
@@ -113,10 +126,35 @@ function setup() {
 
 function draw() {
   background(220);
-  circle(mouseX,mouseY, 100);
+  drawState();
 }
 
+function drawState() {
+  if (state === "start"){
+    // displays the intro image and the play button
+    imageMode(CENTER);
+    image(startImg, width/2, height/2, width, height);
+    image(playButton, width/2, height/2*1.5, BUTTON_WIDTH, BUTTON_HEIGHT);
+  }
+  if (state === "tutorial"){
+    background("blue");
+  }
+  if (state === "grill"){
 
+  }
+  if (state === "assembly"){
+
+  }
+}
+
+function mousePressed() {
+  if (state === "start" && mouseX < width/2 + BUTTON_WIDTH/2 && mouseX > width/2 - BUTTON_WIDTH/2 && mouseY < height/2*1.5 + BUTTON_HEIGHT/2 && mouseY > height/2*1.5 - BUTTON_HEIGHT/2) {
+    state = "tutorial";
+  }
+  if (state === "grill"){
+
+  }
+}
 
 // Receipt in corner - can be brought out/pushed in
 
