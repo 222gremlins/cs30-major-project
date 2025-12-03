@@ -12,6 +12,7 @@ const BUTTON_HEIGHT = 100;
 
 //background images, buttons and icons
 let startImg;
+let grillImg;
 
 let playButton;
 let tutorialButton;
@@ -38,8 +39,11 @@ let mayo;
 // sound effects
 let click;
 let backgroundMusic;
+let sizzle;
+let sauceSqueeze;
 
 
+let isHovered = false;
 let state = "start";
 
 
