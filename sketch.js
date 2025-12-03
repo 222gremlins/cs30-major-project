@@ -98,7 +98,7 @@ function preload() {
 
   // background images, icons and buttons
   startImg = loadImage("assets/intro.png");
-
+  grillImg = loadImage("assets/grillbackground.png");
   playButton = loadImage("assets/playbutton.png");
 
   // patties
@@ -144,7 +144,7 @@ function drawState() {
     background("blue");
   }
   if (state === "grill"){
-
+    background(grillImg);
   }
   if (state === "assembly"){
 
