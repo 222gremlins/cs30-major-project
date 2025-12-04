@@ -138,7 +138,14 @@ function drawState() {
     // displays the intro image and the play button
     imageMode(CENTER);
     image(startImg, width/2, height/2, width, height);
-    image(playButton, width/2, height/2*1.5, BUTTON_WIDTH, BUTTON_HEIGHT);
+    checkHover();
+    if (!isHovered) {
+      image(playButton, width/2, height/1.3, BUTTON_WIDTH, BUTTON_HEIGHT);
+    }
+    else {
+      image(playButton, width/2, height/1.3, BUTTON_WIDTH*1.5, BUTTON_HEIGHT*1.5);
+      //play popping noise
+    }
   }
   if (state === "tutorial"){
     background("blue");
@@ -152,12 +159,33 @@ function drawState() {
 }
 
 function mousePressed() {
-  if (state === "start" && mouseX < width/2 + BUTTON_WIDTH/2 && mouseX > width/2 - BUTTON_WIDTH/2 && mouseY < height/2*1.5 + BUTTON_HEIGHT/2 && mouseY > height/2*1.5 - BUTTON_HEIGHT/2) {
+  if (state === "start" && isHovered) {
     state = "tutorial";
+    //play clicking noise
   }
   if (state === "grill"){
 
   }
+}
+
+function checkHover() {
+  if (state === "start"){
+    if (mouseX < width/2 + BUTTON_WIDTH/2 && mouseX > width/2 - BUTTON_WIDTH/2 && mouseY < height/2*1.5 + BUTTON_HEIGHT/2 && mouseY > height/2*1.5 - BUTTON_HEIGHT/2) {
+      isHovered = true;
+    }
+    else {
+      isHovered = false;
+    }
+  }
+  if (state === "tutorial"){
+
+  }
+  if (state === "grill"){
+
+  }
+  if (state === "assembly"){
+
+  } 
 }
 
 // Receipt in corner - can be brought out/pushed in
