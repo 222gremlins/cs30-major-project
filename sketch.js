@@ -44,7 +44,7 @@ let sauceSqueeze;
 
 
 let isHovered = false;
-let state = "start";
+let state = "grill";
 
 
 class Customer {
@@ -89,6 +89,14 @@ class Patty {
         this.state = "overcooked";
       }
     }
+    if (this.isDragging) {
+      this.x = mouseX;
+      this.y = mouseY;
+    }
+  }
+
+  display() {
+    image(rawPatty, this.x, this.y, this.size, this.size);
   }
 }
 
@@ -152,6 +160,7 @@ function drawState() {
   }
   if (state === "grill"){
     background(grillImg);
+    rect(230, 490, 200, 25);
   }
   if (state === "assembly"){
 
