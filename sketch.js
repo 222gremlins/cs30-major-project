@@ -44,7 +44,7 @@ let sauceSqueeze;
 
 
 let isHovered = false;
-let state = "grill";
+let state = "start";
 
 
 class Customer {
@@ -75,14 +75,14 @@ class Patty {
 
   updatePatty() {
     if (this.onGrill) {
-      cookingTime ++;   // fix these somenumbers
-      if (cookingTime < SOMENUMBERHERE) {
+      cookingTime ++;   // set the constants
+      if (cookingTime < RAW) {
         this.state = "raw";
       }
-      else if (cookingtime > SOMESORTOFNUMBER & cookingtime < SOMENUMBER) {
-        this.state = "beingCooked";
+      else if (cookingtime > RAW & cookingtime < COOKED) {
+        this.state = "halfCooked";
       }
-      else if (cookingtime >= SOMENUMBER && cookingTime <= SOMEOTHERNUMBER) {
+      else if (cookingtime >= COOKED && cookingTime <= PERFECT) {
         this.state = "perfect";
       }
       else {
@@ -96,13 +96,14 @@ class Patty {
   }
 
   display() {
-    image(rawPatty, this.x, this.y, this.size, this.size);
+    if (this.state === "raw"){
+      image(rawPatty, this.x, this.y, this.size, this.size);
+    }
   }
 }
 
 function preload() {
-  // images all being loaded before they are used
-
+  // images/sounds all being loaded before they are used
 
   // background images, icons and buttons
   startImg = loadImage("assets/intro.png");
@@ -128,7 +129,7 @@ function preload() {
   mayo = loadImage("assets/mayo.png");
 
   // sound effects
-  
+  click = loadSound("assets/click.mp3");
 }
 
 function setup() {
@@ -152,31 +153,34 @@ function drawState() {
     }
     else {
       image(playButton, width/2, height/1.3, BUTTON_WIDTH*1.5, BUTTON_HEIGHT*1.5);
-      //play popping noise
     }
   }
   if (state === "tutorial"){
     background("blue");
   }
   if (state === "grill"){
-    background(grillImg);
-    rect(230, 490, 200, 25);
+    
+    
   }
   if (state === "assembly"){
-
+  
   }
 }
 
 function mousePressed() {
   if (state === "start" && isHovered) {
+    click.play();
     state = "tutorial";
-    //play clicking noise
   }
   if (state === "grill"){
-
+    
+  }
+  if (state === "assembly") {
+    
   }
 }
 
+// checks if the mouse is hovering above buttons/items and gives back true/false
 function checkHover() {
   if (state === "start"){
     if (mouseX < width/2 + BUTTON_WIDTH/2 && mouseX > width/2 - BUTTON_WIDTH/2 && mouseY < height/2*1.5 + BUTTON_HEIGHT/2 && mouseY > height/2*1.5 - BUTTON_HEIGHT/2) {
@@ -193,7 +197,7 @@ function checkHover() {
 
   }
   if (state === "assembly"){
-
+  
   } 
 }
 
