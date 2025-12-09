@@ -133,7 +133,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(displayWidth, displayHeight);
 
 }
 
@@ -199,6 +199,12 @@ function checkHover() {
   if (state === "assembly"){
   
   } 
+}
+
+// kills the window if they do something bad
+function die() {
+  sleep(1000);
+  window.close();
 }
 
 // Receipt in corner - can be brought out/pushed in
