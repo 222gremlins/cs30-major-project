@@ -44,7 +44,7 @@ let sauceSqueeze;
 
 
 let isHovered = false;
-let state = "start";
+let state = "grill";
 
 
 class Customer {
