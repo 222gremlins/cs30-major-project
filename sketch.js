@@ -5,8 +5,14 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
+const GAME_WIDTH = 1900;
+const GAME_HEIGHT  = 900;
+const GRILL_WIDTH = 500;
+const GRILL_HEIGHT = 500;
+
 //Patience variables for timed orders
 const MAX_PATIENCE = 100;
+
 const BUTTON_WIDTH = 250;
 const BUTTON_HEIGHT = 100;
 
@@ -44,8 +50,9 @@ let sauceSqueeze;
 
 
 let isHovered = false;
-let state = "grill";
+let state = "tutorial";
 
+tutorialButtonPressed = true;
 
 class Customer {
   constructor() {
@@ -93,14 +100,19 @@ class Patty {
       this.x = mouseX;
       this.y = mouseY;
     }
+     
   }
 
   display() {
     if (this.state === "raw"){
       image(rawPatty, this.x, this.y, this.size, this.size);
     }
+    if (this.state === "perfect") {
+      image(perfectPatty, this.x, this.y,this.size);
+    }
   }
 }
+
 
 function preload() {
   // images/sounds all being loaded before they are used
@@ -133,10 +145,9 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(displayWidth, displayHeight);
-
+  createCanvas(GAME_WIDTH, GAME_HEIGHT);
+  
 }
-
 function draw() {
   background(220);
   drawState();
@@ -157,6 +168,22 @@ function drawState() {
   }
   if (state === "tutorial"){
     background("blue");
+    // will be trying to add a video here for the tutorial and then will also have a screen with just words explaining it in case the video does not load/other issues
+    if (tutorialButtonPressed) {
+      background("#E5DACA");
+      textSize(32);
+      fill("#F69F95");
+      stroke("#FFE2A6");
+      strokeWeight(4);
+      text('tutorial!', GAME_WIDTH/2, BUTTON_HEIGHT);
+    }
+    else {
+
+    }
+    //  If a single string is passed, as in '/assets/topsecret.mp4', a single video is loaded. 
+    // An array of strings can be used to load the same video in different formats. 
+    // ex, ['/assets/topsecret.mp4', '/assets/topsecret.ogv', '/assets/topsecret.webm'].
+    //  This is useful for ensuring that the video can play across different browsers with different capabilities. 
   }
   if (state === "grill"){
     
@@ -179,6 +206,7 @@ function mousePressed() {
     
   }
 }
+
 
 // checks if the mouse is hovering above buttons/items and gives back true/false
 function checkHover() {
