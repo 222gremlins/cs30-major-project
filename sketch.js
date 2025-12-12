@@ -171,11 +171,7 @@ function drawState() {
     // will be trying to add a video here for the tutorial and then will also have a screen with just words explaining it in case the video does not load/other issues
     if (tutorialButtonPressed) {
       background("#E5DACA");
-      textSize(32);
-      fill("#F69F95");
-      stroke("#FFE2A6");
-      strokeWeight(4);
-      text('tutorial!', GAME_WIDTH/2, BUTTON_HEIGHT);
+      displayText();
     }
     else {
 
@@ -186,7 +182,6 @@ function drawState() {
     //  This is useful for ensuring that the video can play across different browsers with different capabilities. 
   }
   if (state === "grill"){
-    
     
   }
   if (state === "assembly"){
@@ -227,6 +222,18 @@ function checkHover() {
   if (state === "assembly"){
   
   } 
+}
+
+function displayText() {
+  if (state === "tutorial") {
+    textSize(32);
+    fill("#F69F95");
+    stroke("#FFE2A6");
+    strokeWeight(4);
+    text('tutorial!', GAME_WIDTH/2, BUTTON_HEIGHT);
+    textAlign(CENTER);
+    text("King's Burgeria :P", GAME_WIDTH/2, BUTTON_HEIGHT+50);
+  }
 }
 
 // kills the window if they do something bad
