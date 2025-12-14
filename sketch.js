@@ -10,11 +10,30 @@ const GAME_HEIGHT  = 900;
 const GRILL_WIDTH = 500;
 const GRILL_HEIGHT = 500;
 
-//Patience variables for timed orders
-const MAX_PATIENCE = 100;
+const NAV_HEIGHT = 80;
+const NAV_BUTTONS = ["tutorial", "grill", "assembly", "register"];
 
+const ASSEMBLY_ITEMS = [
+  "bun bottom",
+  "patty",
+  "cheese",
+  "pickle",
+  "lettuce",
+  "tomato",
+  "bun top"
+];
+
+//Patience variables 
+const MAX_PATIENCE = 100;
 const BUTTON_WIDTH = 250;
 const BUTTON_HEIGHT = 100;
+
+
+const RAW_PATTY_X = 100;
+const RAW_PATTY_Y = 300;
+const HALF_TIME = 180;
+const PERFECT_TIME = 360;
+const BURNT_TIME = 540;
 
 //background images, buttons and icons
 let startImg;
@@ -50,9 +69,12 @@ let sauceSqueeze;
 
 
 let isHovered = false;
-let state = "tutorial";
+let state = "grill";
 
-tutorialButtonPressed = true;
+// testing things
+let grillSlots = [];
+let unlockedSlots = 2;
+let tutorialButtonPressed = true;
 
 class Customer {
   constructor() {
@@ -78,37 +100,43 @@ class Patty {
     this.state = "raw";
     this.isDragging = false;
     this.onGrill = false;
+    this.cookingTime = 0;
   }
 
   updatePatty() {
     if (this.onGrill) {
-      cookingTime ++;   // set the constants
-      if (cookingTime < RAW) {
-        this.state = "raw";
-      }
-      else if (cookingtime > RAW & cookingtime < COOKED) {
-        this.state = "halfCooked";
-      }
-      else if (cookingtime >= COOKED && cookingTime <= PERFECT) {
-        this.state = "perfect";
-      }
-      else {
-        this.state = "overcooked";
-      }
+      this.cookingTime ++;   // set the constants
     }
+    if (this.cookingTime < HALF_TIME) {
+      this.state = "raw";
+    }
+    else if (this.cookingTime < PERFECT_TIME) {
+      this.state = "half";
+    }
+    else if (this.cookingTime < BURNT_TIME) {
+      this.state = "perfect";
+    }
+    else {
+      this.state = "overcooked";
+    }
+
     if (this.isDragging) {
-      this.x = mouseX;
-      this.y = mouseY;
+      this.x = mouseX - this.size/2;
+      this.y = mouseY - this.size/2;
     }
      
   }
 
   display() {
+    //imageMode(CENTER);
     if (this.state === "raw"){
       image(rawPatty, this.x, this.y, this.size, this.size);
     }
-    if (this.state === "perfect") {
+    else if (this.state === "perfect") {
       image(perfectPatty, this.x, this.y,this.size);
+    }
+    else if (this.state === "overcooked") {
+      image(overcookedPatty, this.x, this.y, this.size, this.size);
     }
   }
 }
@@ -124,7 +152,7 @@ function preload() {
 
   // patties
   rawPatty = loadImage("assets/rawpatty.png");
-  mediumPatty = loadImage("assets/perfectpatty.png");
+  perfectPatty = loadImage("assets/perfectpatty.png");
   overcookedPatty = loadImage("assets/overcookedpatty.png");
   
   // toppings
@@ -146,6 +174,7 @@ function preload() {
 
 function setup() {
   createCanvas(GAME_WIDTH, GAME_HEIGHT);
+  setupGrillSlots();
   
 }
 function draw() {
@@ -158,6 +187,7 @@ function drawState() {
     // displays the intro image and the play button
     imageMode(CENTER);
     image(startImg, width/2, height/2, width, height);
+    imageMode(CORNER);
     checkHover();
     if (!isHovered) {
       image(playButton, width/2, height/1.3, BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -181,12 +211,86 @@ function drawState() {
     // ex, ['/assets/topsecret.mp4', '/assets/topsecret.ogv', '/assets/topsecret.webm'].
     //  This is useful for ensuring that the video can play across different browsers with different capabilities. 
   }
-  if (state === "grill"){
-    
+  if (state === "register") {
+    background("green");
+
+    fill(0);
+    textSize(40);
+    textAlign(CENTER);
+    text("REGISTER", width / 2, 120);
+
+    textSize(22);
+    text("Customer orders & money will go here", width / 2, 200);
   }
   if (state === "assembly"){
-  
+    fill("white");
+    rect(600, 120, 400, 500, 20);
+
+    fill(0);
+    textSize(32);
+    textAlign(CENTER);
+    text("ASSEMBLY AREA", 600 + 400 / 2, 110);
+
+    fill("#E5DACA");
+    rect(100, 150, 200, 500, 20);
+
+    textSize(22);
+    fill(0);
+    text("INGREDIENTS", 200, 110);
+
+    for (let i = 0; i < ASSEMBLY_ITEMS.length; i++) {
+      let y = 200 + i*45;
+
+      fill("white");
+      rect(150, y, 100, 30, 10);
+
+      fill(0);
+      textSize(18);
+      textAlign(CENTER, CENTER);
+      text(ASSEMBLY_ITEMS[i], 200, y + 15);
+      textAlign(LEFT, BASELINE);
+      }
+    fill(150);
+    textSize(18);
+    text("burger builds here?", 800, 300);
   }
+  if (state === "grill"){
+    
+    fill("gray");
+    rect(300, 150, GRILL_WIDTH, GRILL_HEIGHT, 20);
+    
+    image(rawPatty, RAW_PATTY_X, RAW_PATTY_Y, 100, 100);
+
+    fill(0);
+    textSize(16);
+    textAlign(CENTER);
+    text("RAW PATTY", RAW_PATTY_X + 50, RAW_PATTY_Y + 120);
+
+    for (let slot of grillSlots) {
+      if (slot.locked) {
+        fill("#444");
+    } 
+      else {
+        fill("#777");
+    }
+
+    rect(slot.x, slot.y, 120, 120, 15);
+
+    if (slot.locked) {
+      fill(255);
+      textSize(14);
+      textAlign(CENTER, CENTER);
+      text("LOCKED", slot.x + 60, slot.y + 60);
+    }
+
+    if (slot.patty) {
+     slot.patty.updatePatty();
+     slot.patty.display();
+    }
+
+  }
+}
+  drawNavBar();
 }
 
 function mousePressed() {
@@ -194,11 +298,24 @@ function mousePressed() {
     click.play();
     state = "tutorial";
   }
-  if (state === "grill"){
+  else if (state === "grill"){
+    if (isHovered) {
+      for (let slot of grillSlots) {
+        if (!slot.locked && slot.patty === null) {
+          slot.patty = new Patty(slot.x + 10, slot.y + 10);
+          slot.patty.onGrill = true;
+        }
+      }
+    }
+  }
+  else if (state === "assembly") {
     
   }
-  if (state === "assembly") {
-    
+  if (state !== "start") {
+    if (mouseY > height - NAV_HEIGHT) {
+    let index = floor(mouseX / (width / NAV_BUTTONS.length));
+    state = NAV_BUTTONS[index];
+    }
   }
 }
 
@@ -217,11 +334,13 @@ function checkHover() {
 
   }
   if (state === "grill"){
-
-  }
+    if (mouseX > RAW_PATTY_X && mouseX < RAW_PATTY_X + 100 && mouseY > RAW_PATTY_Y && mouseY < RAW_PATTY_Y + 100) {
+      isHovered = true;
+    }
   if (state === "assembly"){
   
-  } 
+    } 
+  }
 }
 
 function displayText() {
@@ -233,6 +352,41 @@ function displayText() {
     text('tutorial!', GAME_WIDTH/2, BUTTON_HEIGHT);
     textAlign(CENTER);
     text("King's Burgeria :P", GAME_WIDTH/2, BUTTON_HEIGHT+50);
+  }
+}
+
+function drawNavBar() {
+  let buttonWidth = width / NAV_BUTTONS.length;
+
+  for (let i = 0; i < NAV_BUTTONS.length; i++) {
+    let x = i * buttonWidth;
+    let y = height - NAV_HEIGHT;
+
+    fill(state === NAV_BUTTONS[i] ? "#F4B942" : "#E0E0E0");
+    rect(x, y, buttonWidth, NAV_HEIGHT);
+
+    fill(0);
+    textAlign(CENTER, CENTER);
+    textSize(24); //maybe toUpperCase()
+    text(NAV_BUTTONS[i], x + buttonWidth / 2, y + NAV_HEIGHT / 2);
+  }
+  textAlign(LEFT, BASELINE);
+}
+
+function setupGrillSlots() {
+  let startX = 320;
+  let startY = 170;
+  let spacing = 160;
+
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      grillSlots.push({
+        x: startX + col*spacing,
+        y: startY + row*spacing,
+        patty: 0,
+        locked: grillSlots.length >= unlockedSlots
+      });
+    }
   }
 }
 
