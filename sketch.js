@@ -14,13 +14,13 @@ const NAV_HEIGHT = 80;
 const NAV_BUTTONS = ["tutorial", "grill", "assembly", "register"];
 
 const ASSEMBLY_ITEMS = [
-  "bun bottom",
+  "bun top",
   "patty",
   "cheese",
   "pickle",
   "lettuce",
   "tomato",
-  "bun top"
+  "bun botoom"
 ];
 
 //Patience variables 
@@ -43,29 +43,16 @@ let playButton;
 let tutorialButton;
 
 // patties
-let rawPatty;
-let beingCookedPatty;
-let perfectPatty;
-let overcookedPatty;
+let rawPatty, cookingPatty, perfectPatty, overcookedPatty;
 
 // toppings
-let pickle;
-let cheese;
-let tomato;
-let onion;
-let lettuce;
+let pickle, cheese, tomato, onion, lettuce;
 
 // sauces
-let bbq;
-let mustard;
-let ketchup;
-let mayo;
+let bbq, mustard, ketchup, mayo;
 
 // sound effects
-let click;
-let backgroundMusic;
-let sizzle;
-let sauceSqueeze;
+let click, backgroundMusic, sizzle, sauceSqueeze;
 
 
 let isHovered = false;
@@ -107,13 +94,13 @@ class Patty {
     if (this.onGrill) {
       this.cookingTime ++;   // set the constants
     }
-    if (this.cookingTime < HALF_TIME) {
+    if (this.cookingTime <= HALF_TIME) {
       this.state = "raw";
     }
-    else if (this.cookingTime < PERFECT_TIME) {
+    else if (this.cookingTime <= PERFECT_TIME) {
       this.state = "half";
     }
-    else if (this.cookingTime < BURNT_TIME) {
+    else if (this.cookingTime <= BURNT_TIME) {
       this.state = "perfect";
     }
     else {
@@ -132,8 +119,11 @@ class Patty {
     if (this.state === "raw"){
       image(rawPatty, this.x, this.y, this.size, this.size);
     }
+    else if (this.state === "half") {
+      image(cookingPatty, this.x, this.y, this.size, this.size);
+    }
     else if (this.state === "perfect") {
-      image(perfectPatty, this.x, this.y,this.size);
+      image(perfectPatty, this.x, this.y,this.size, this.size);
     }
     else if (this.state === "overcooked") {
       image(overcookedPatty, this.x, this.y, this.size, this.size);
@@ -152,8 +142,10 @@ function preload() {
 
   // patties
   rawPatty = loadImage("assets/rawpatty.png");
+  cookingPatty = loadImage("assets/cookingpatty.png");
   perfectPatty = loadImage("assets/perfectpatty.png");
   overcookedPatty = loadImage("assets/overcookedpatty.png");
+  
   
   // toppings
   onion = loadImage("assets/onion.png");
@@ -217,10 +209,10 @@ function drawState() {
     fill(0);
     textSize(40);
     textAlign(CENTER);
-    text("REGISTER", width / 2, 120);
+    text("REGISTER", width / 2, 122);
 
     textSize(22);
-    text("Customer orders & money will go here", width / 2, 200);
+    text("customer orders & money will go here", width / 2, 222);
   }
   if (state === "assembly"){
     fill("white");
@@ -229,7 +221,7 @@ function drawState() {
     fill(0);
     textSize(32);
     textAlign(CENTER);
-    text("ASSEMBLY AREA", 600 + 400 / 2, 110);
+    text("ASSEMBLY AREA", 800, 110);
 
     fill("#E5DACA");
     rect(100, 150, 200, 500, 20);
@@ -248,14 +240,14 @@ function drawState() {
       textSize(18);
       textAlign(CENTER, CENTER);
       text(ASSEMBLY_ITEMS[i], 200, y + 15);
-      textAlign(LEFT, BASELINE);
-      }
+      textAlign(LEFT);
+    }
     fill(150);
     textSize(18);
     text("burger builds here?", 800, 300);
   }
   if (state === "grill"){
-    
+    checkHover();
     fill("gray");
     rect(300, 150, GRILL_WIDTH, GRILL_HEIGHT, 20);
     
@@ -268,28 +260,28 @@ function drawState() {
 
     for (let slot of grillSlots) {
       if (slot.locked) {
-        fill("#444");
-    } 
+        fill("#383737ff");
+      } 
       else {
-        fill("#777");
+        fill("#636060ff");
+      }
+
+      rect(slot.x, slot.y, 120, 120, 15);
+
+      if (slot.locked) {
+        fill(255);
+        textSize(14);
+        textAlign(CENTER, CENTER);
+        text("LOCKED", slot.x + 60, slot.y + 60);
+      }
+
+      if (slot.patty) {
+        slot.patty.updatePatty();
+        slot.patty.display();
+      }
+
     }
-
-    rect(slot.x, slot.y, 120, 120, 15);
-
-    if (slot.locked) {
-      fill(255);
-      textSize(14);
-      textAlign(CENTER, CENTER);
-      text("LOCKED", slot.x + 60, slot.y + 60);
-    }
-
-    if (slot.patty) {
-     slot.patty.updatePatty();
-     slot.patty.display();
-    }
-
   }
-}
   drawNavBar();
 }
 
@@ -299,9 +291,9 @@ function mousePressed() {
     state = "tutorial";
   }
   else if (state === "grill"){
-    if (isHovered) {
-      for (let slot of grillSlots) {
-        if (!slot.locked && slot.patty === null) {
+    for (let slot of grillSlots) {
+      if (isHovered) {
+        if (!slot.locked && slot.patty === 0) {
           slot.patty = new Patty(slot.x + 10, slot.y + 10);
           slot.patty.onGrill = true;
         }
@@ -313,8 +305,8 @@ function mousePressed() {
   }
   if (state !== "start") {
     if (mouseY > height - NAV_HEIGHT) {
-    let index = floor(mouseX / (width / NAV_BUTTONS.length));
-    state = NAV_BUTTONS[index];
+      let index = floor(mouseX / (width / NAV_BUTTONS.length));
+      state = NAV_BUTTONS[index];
     }
   }
 }
@@ -337,17 +329,20 @@ function checkHover() {
     if (mouseX > RAW_PATTY_X && mouseX < RAW_PATTY_X + 100 && mouseY > RAW_PATTY_Y && mouseY < RAW_PATTY_Y + 100) {
       isHovered = true;
     }
+    else {
+      isHovered = false;
+    }
+  }
   if (state === "assembly"){
   
-    } 
-  }
+  } 
 }
 
 function displayText() {
   if (state === "tutorial") {
     textSize(32);
     fill("#F69F95");
-    stroke("#FFE2A6");
+    //stroke("#FFE2A6");
     strokeWeight(4);
     text('tutorial!', GAME_WIDTH/2, BUTTON_HEIGHT);
     textAlign(CENTER);
@@ -370,7 +365,7 @@ function drawNavBar() {
     textSize(24); //maybe toUpperCase()
     text(NAV_BUTTONS[i], x + buttonWidth / 2, y + NAV_HEIGHT / 2);
   }
-  textAlign(LEFT, BASELINE);
+  textAlign(LEFT);
 }
 
 function setupGrillSlots() {
