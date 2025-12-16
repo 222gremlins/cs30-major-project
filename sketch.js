@@ -85,7 +85,6 @@ class Patty {
 
     // setting beginning state and cooking variables
     this.state = "raw";
-    this.isDragging = false;
     this.onGrill = false;
     this.cookingTime = 0;
   }
@@ -107,10 +106,7 @@ class Patty {
       this.state = "overcooked";
     }
 
-    if (this.isDragging) {
-      this.x = mouseX - this.size/2;
-      this.y = mouseY - this.size/2;
-    }
+
      
   }
 
@@ -346,7 +342,7 @@ function displayText() {
     strokeWeight(4);
     text('tutorial!', GAME_WIDTH/2, BUTTON_HEIGHT);
     textAlign(CENTER);
-    text("King's Burgeria :P", GAME_WIDTH/2, BUTTON_HEIGHT+50);
+    text("King's Burgeria", GAME_WIDTH/2, BUTTON_HEIGHT+50);
   }
 }
 
@@ -354,10 +350,14 @@ function drawNavBar() {
   let buttonWidth = width / NAV_BUTTONS.length;
 
   for (let i = 0; i < NAV_BUTTONS.length; i++) {
-    let x = i * buttonWidth;
+    let x = i *buttonWidth;
     let y = height - NAV_HEIGHT;
-
-    fill(state === NAV_BUTTONS[i] ? "#F4B942" : "#E0E0E0");
+    if (state === NAV_BUTTONS[i]){
+      fill('#bae571');
+    }
+    else {
+      fill('#6ec259');
+    }
     rect(x, y, buttonWidth, NAV_HEIGHT);
 
     fill(0);
@@ -369,8 +369,8 @@ function drawNavBar() {
 }
 
 function setupGrillSlots() {
-  let startX = 320;
-  let startY = 170;
+  let startX = 330;
+  let startY = 180;
   let spacing = 160;
 
   for (let row = 0; row < 3; row++) {
