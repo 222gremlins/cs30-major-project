@@ -20,7 +20,7 @@ const ASSEMBLY_ITEMS = [
   "pickle",
   "lettuce",
   "tomato",
-  "bun botoom"
+  "bun bottom"
 ];
 
 //Patience variables 
@@ -171,14 +171,14 @@ function drawState() {
   if (state === "start"){
     // displays the intro image and the play button
     imageMode(CENTER);
-    image(startImg, width/2, height/2, width, height);
+    image(startImg, GAME_WIDTH/2, GAME_HEIGHT/2, GAME_WIDTH, GAME_HEIGHT);
     imageMode(CORNER);
     checkHover();
     if (!isHovered) {
-      image(playButton, width/2, height/1.3, BUTTON_WIDTH, BUTTON_HEIGHT);
+      image(playButton, GAME_WIDTH/2, GAME_HEIGHT/1.3, BUTTON_WIDTH, BUTTON_HEIGHT);
     }
     else {
-      image(playButton, width/2, height/1.3, BUTTON_WIDTH*1.5, BUTTON_HEIGHT*1.5);
+      image(playButton, GAME_WIDTH/2, GAME_HEIGHT/1.3, BUTTON_WIDTH*1.5, BUTTON_HEIGHT*1.5);
     }
   }
   if (state === "tutorial"){
@@ -189,7 +189,7 @@ function drawState() {
       displayText();
     }
     else {
-
+      
     }
     //  If a single string is passed, as in '/assets/topsecret.mp4', a single video is loaded. 
     // An array of strings can be used to load the same video in different formats. 
@@ -202,10 +202,10 @@ function drawState() {
     fill(0);
     textSize(40);
     textAlign(CENTER);
-    text("REGISTER", width / 2, 122);
+    text("REGISTER", GAME_WIDTH / 2, 122);
 
     textSize(22);
-    text("customer orders & money will go here", width / 2, 222);
+    text("customer orders & money will go here", GAME_WIDTH / 2, 222);
   }
   if (state === "assembly"){
     fill("white");
@@ -297,7 +297,7 @@ function mousePressed() {
   }
   if (state !== "start") {
     if (mouseY > height - NAV_HEIGHT) {
-      let index = floor(mouseX / (width / NAV_BUTTONS.length));
+      let index = floor(mouseX / (GAME_WIDTH / NAV_BUTTONS.length));
       state = NAV_BUTTONS[index];
     }
   }
@@ -307,7 +307,7 @@ function mousePressed() {
 // checks if the mouse is hovering above buttons/items and gives back true/false
 function checkHover() {
   if (state === "start"){
-    if (mouseX < width/2 + BUTTON_WIDTH/2 && mouseX > width/2 - BUTTON_WIDTH/2 && mouseY < height/2*1.5 + BUTTON_HEIGHT/2 && mouseY > height/2*1.5 - BUTTON_HEIGHT/2) {
+    if (mouseX < GAME_WIDTH/2 + BUTTON_WIDTH/2 && mouseX > GAME_WIDTH/2 - BUTTON_WIDTH/2 && mouseY < GAME_HEIGHT/2*1.5 + BUTTON_HEIGHT/2 && mouseY > GAME_HEIGHT/2*1.5 - BUTTON_HEIGHT/2) {
       isHovered = true;
     }
     else {
@@ -344,7 +344,7 @@ function displayText() {
 
 function drawNavBar() {
   if (state !== "start" && state !== "tutorial") {
-    let buttonWidth = width / NAV_BUTTONS.length;
+    let buttonWidth = GAME_WIDTH / NAV_BUTTONS.length;
   
     for (let i = 0; i < NAV_BUTTONS.length; i++) {
       let x = i *buttonWidth;
