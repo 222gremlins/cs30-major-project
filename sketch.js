@@ -56,7 +56,7 @@ let click, backgroundMusic, sizzle, sauceSqueeze;
 
 
 let isHovered = false;
-let state = "grill";
+let state = "start";
 
 // testing things
 let grillSlots = [];
@@ -105,9 +105,6 @@ class Patty {
     else {
       this.state = "overcooked";
     }
-
-
-     
   }
 
   display() {
@@ -275,7 +272,6 @@ function drawState() {
         slot.patty.updatePatty();
         slot.patty.display();
       }
-
     }
   }
   drawNavBar();
@@ -347,25 +343,27 @@ function displayText() {
 }
 
 function drawNavBar() {
-  let buttonWidth = width / NAV_BUTTONS.length;
-
-  for (let i = 0; i < NAV_BUTTONS.length; i++) {
-    let x = i *buttonWidth;
-    let y = height - NAV_HEIGHT;
-    if (state === NAV_BUTTONS[i]){
-      fill('#bae571');
+  if (state !== "start" && state !== "tutorial") {
+    let buttonWidth = width / NAV_BUTTONS.length;
+  
+    for (let i = 0; i < NAV_BUTTONS.length; i++) {
+      let x = i *buttonWidth;
+      let y = height - NAV_HEIGHT;
+      if (state === NAV_BUTTONS[i]){
+        fill('#bae571');
+      }
+      else {
+        fill('#6ec259');
+      }
+      rect(x, y, buttonWidth, NAV_HEIGHT);
+  
+      fill(0);
+      textAlign(CENTER, CENTER);
+      textSize(24); //maybe toUpperCase()
+      text(NAV_BUTTONS[i], x + buttonWidth / 2, y + NAV_HEIGHT / 2);
     }
-    else {
-      fill('#6ec259');
-    }
-    rect(x, y, buttonWidth, NAV_HEIGHT);
-
-    fill(0);
-    textAlign(CENTER, CENTER);
-    textSize(24); //maybe toUpperCase()
-    text(NAV_BUTTONS[i], x + buttonWidth / 2, y + NAV_HEIGHT / 2);
+    textAlign(LEFT);
   }
-  textAlign(LEFT);
 }
 
 function setupGrillSlots() {
