@@ -11,7 +11,7 @@ const GRILL_WIDTH = 500;
 const GRILL_HEIGHT = 500;
 
 const NAV_HEIGHT = 80;
-const NAV_BUTTONS = ["tutorial", "grill", "assembly", "register"];
+const NAV_BUTTONS = ["produce", "grill", "assembly", "register"];
 
 const ASSEMBLY_ITEMS = [
   "bun top",
@@ -56,7 +56,7 @@ let click, backgroundMusic, sizzle, sauceSqueeze;
 
 
 let isHovered = false;
-let state = "start";
+let state = "grill";
 
 // testing things
 let grillSlots = [];
@@ -175,9 +175,11 @@ function drawState() {
     imageMode(CORNER);
     checkHover();
     if (!isHovered) {
+      imageMode(CENTER);
       image(playButton, GAME_WIDTH/2, GAME_HEIGHT/1.3, BUTTON_WIDTH, BUTTON_HEIGHT);
     }
     else {
+      imageMode(CENTER);
       image(playButton, GAME_WIDTH/2, GAME_HEIGHT/1.3, BUTTON_WIDTH*1.5, BUTTON_HEIGHT*1.5);
     }
   }
@@ -359,8 +361,8 @@ function drawNavBar() {
   
       fill(0);
       textAlign(CENTER, CENTER);
-      textSize(24); //maybe toUpperCase()
-      text(NAV_BUTTONS[i], x + buttonWidth / 2, y + NAV_HEIGHT / 2);
+      textSize(24); 
+      text(NAV_BUTTONS[i], x + buttonWidth/2, y + NAV_HEIGHT/2);
     }
     textAlign(LEFT);
   }
