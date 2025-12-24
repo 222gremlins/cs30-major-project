@@ -56,10 +56,14 @@ let click, backgroundMusic, sizzle, sauceSqueeze;
 
 
 let isHovered = false;
+let heldItem = 0; //null if no item is held
+
+// game state variable
 let state = "grill";
 
 // testing things
 let grillSlots = [];
+let burgerStack = [];
 let unlockedSlots = 2;
 let tutorialButtonPressed = true;
 
@@ -69,9 +73,15 @@ class Customer {
     this.patience = MAX_PATIENCE;
     
   }
+  update() {
+    this.patience--;
+  }
 
+  isAngry() {
+    return this.patience <= 0;
+  }
   generateOrder() {
-    
+
   }
 }
 
@@ -85,7 +95,7 @@ class Patty {
 
     // setting beginning state and cooking variables
     this.state = "raw";
-    this.onGrill = false;
+    this.onGrill = true;
     this.cookingTime = 0;
   }
 
@@ -121,6 +131,9 @@ class Patty {
     else if (this.state === "overcooked") {
       image(overcookedPatty, this.x, this.y, this.size, this.size);
     }
+  }
+  isHovered() {
+    return mouseHover(this.x, this.y, this.size, this.size);
   }
 }
 
@@ -240,6 +253,16 @@ function drawState() {
     fill(150);
     textSize(18);
     text("burger builds here?", 800, 300);
+
+    let x = 800;
+    let y = 500;
+
+    for (let item of burgerStack) {
+      if (item === "patty") {
+        image(perfectPatty, x - 50, y, 100, 40);
+        y -= 35;
+      }
+    }
   }
   if (state === "grill"){
     checkHover();
@@ -286,11 +309,19 @@ function mousePressed() {
   }
   else if (state === "grill"){
     for (let slot of grillSlots) {
-      if (isHovered) {
-        if (!slot.locked && slot.patty === 0) {
-          slot.patty = new Patty(slot.x + 10, slot.y + 10);
-          slot.patty.onGrill = true;
-        }
+      // Placing raw patty
+      if (heldItem === "rawPatty" && !slot.locked && slot.patty === 0 && mouseHover(slot.x, slot.y, slot.size, slot.size)) {
+        slot.patty = new Patty(slot.x + 10, slot.y + 10);
+        heldItem = 0;
+
+      }
+
+      // Pick up cooked patty
+      if (heldItem === 0 && slot.patty && mouseHover(slot.patty.x, slot.patty.y, slot.patty.size, slot.patty.size)) {
+        heldItem = slot.patty;
+        slot.patty.onGrill = false;
+        slot.patty = 0;
+
       }
     }
   }
@@ -332,6 +363,11 @@ function checkHover() {
   } 
 }
 
+function mouseHover(x, y, w, h) {
+  return mouseX > x && mouseX < x + w &&
+         mouseY > y && mouseY < y + h;
+}
+
 function displayText() {
   if (state === "tutorial") {
     textSize(32);
@@ -369,6 +405,7 @@ function drawNavBar() {
 }
 
 function setupGrillSlots() {
+  grillSlots = [];
   let startX = 330;
   let startY = 180;
   let spacing = 160;
@@ -383,6 +420,22 @@ function setupGrillSlots() {
       });
     }
   }
+}
+
+function addToBurger(item) {
+  burgerStack.push(item);
+}
+
+function checkOrder(customer) {
+  if (burgerStack.length !== customer.order.length) {
+    return false;
+  }
+  for (let i = 0; i < burgerStack.length; i++) {
+    if (burgerStack[i] !== customer.order[i]) {
+      return false;
+    } 
+  }
+  return true;
 }
 
 // kills the window if they do something bad
