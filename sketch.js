@@ -28,6 +28,7 @@ const MAX_PATIENCE = 100;
 const BUTTON_WIDTH = 250;
 const BUTTON_HEIGHT = 100;
 
+let currentCustomer;
 
 const RAW_PATTY_X = 100;
 const RAW_PATTY_Y = 300;
@@ -59,7 +60,7 @@ let isHovered = false;
 let heldItem = 0; //null if no item is held
 
 // game state variable
-let state = "grill";
+let state = "start";
 
 // testing things
 let grillSlots = [];
@@ -81,7 +82,26 @@ class Customer {
     return this.patience <= 0;
   }
   generateOrder() {
+    let base = ["bun bottom", "patty", "bun top"];
+    let extras = ["cheese", "lettuce", "tomato", "pickle"];
+    
+    if (random() < 0.6) {
+      base.splice(2, 0, random(extras));
+    }
+    return base;
+  }
+  display() {
+    fill(255);
+    rect(50, 150, 260, 300, 20);
+    fill(0);
+    textSize(18);
+    text("ORDER:", 70, 190);
 
+    for (let i = 0; i < this.order.length; i++) {
+      text("- " + this.order[i], 70, 220 + i * 30);
+    }
+
+    text("Patience: " + this.patience, 70, 350);
   }
 }
 
@@ -173,11 +193,20 @@ function preload() {
 function setup() {
   createCanvas(GAME_WIDTH, GAME_HEIGHT);
   setupGrillSlots();
+  currentCustomer = new Customer();
   
 }
 function draw() {
   background(220);
   drawState();
+  if (heldItem === "rawPatty") {
+  image(rawPatty, mouseX - 50, mouseY - 50, 100, 100);
+}
+else if (heldItem instanceof Patty) {
+  heldItem.x = mouseX - 50;
+  heldItem.y = mouseY - 50;
+  heldItem.display();
+}
 }
 
 function drawState() {
@@ -217,10 +246,12 @@ function drawState() {
     fill(0);
     textSize(40);
     textAlign(CENTER);
-    text("REGISTER", GAME_WIDTH / 2, 122);
+    text("REGISTER", GAME_WIDTH/2, 100);
+
+    currentCustomer.display();
 
     textSize(22);
-    text("customer orders & money will go here", GAME_WIDTH / 2, 222);
+    text("Click to submit burger here", GAME_WIDTH/2, 222);
   }
   if (state === "assembly"){
     fill("white");
@@ -265,6 +296,9 @@ function drawState() {
     }
   }
   if (state === "grill"){
+    imageMode(CORNER);
+    image(grillImg, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+    imageMode(CENTER);
     checkHover();
     fill("gray");
     rect(300, 150, GRILL_WIDTH, GRILL_HEIGHT, 20);
@@ -308,30 +342,46 @@ function mousePressed() {
     state = "tutorial";
   }
   else if (state === "grill"){
-    for (let slot of grillSlots) {
-      // Placing raw patty
-      if (heldItem === "rawPatty" && !slot.locked && slot.patty === 0 && mouseHover(slot.x, slot.y, slot.size, slot.size)) {
-        slot.patty = new Patty(slot.x + 10, slot.y + 10);
-        heldItem = 0;
+     //pick up the raw patty but only once
+  if (heldItem === 0 && mouseHover(RAW_PATTY_X, RAW_PATTY_Y, 100, 100)) {
+    heldItem = "rawPatty";
+    click.play();
+    return;
+  }
 
-      }
+  // th e slots
+  for (let slot of grillSlots) {
+    //placing raw patty on grill
+    if (heldItem === "rawPatty" && !slot.locked && slot.patty === 0 && mouseHover(slot.x, slot.y, 120, 120)){
+      slot.patty = new Patty(slot.x + 10, slot.y + 10);
+      slot.patty.onGrill = true;
+      heldItem = 0;
+      return;
+    }
 
-      // Pick up cooked patty
-      if (heldItem === 0 && slot.patty && mouseHover(slot.patty.x, slot.patty.y, slot.patty.size, slot.patty.size)) {
-        heldItem = slot.patty;
-        slot.patty.onGrill = false;
-        slot.patty = 0;
-
-      }
+    //picking up the cooked patty
+    if (heldItem === 0 && slot.patty && mouseHover(slot.patty.x, slot.patty.y, slot.patty.size, slot.patty.size)){
+      heldItem = slot.patty;
+      slot.patty.onGrill = false;
+      slot.patty = 0;
+      return;
     }
   }
+}
   else if (state === "assembly") {
     
   }
   if (state !== "start") {
     if (mouseY > height - NAV_HEIGHT) {
-      let index = floor(mouseX / (GAME_WIDTH / NAV_BUTTONS.length));
+      let index = floor(mouseX/(GAME_WIDTH/NAV_BUTTONS.length));
       state = NAV_BUTTONS[index];
+      return;
+    }
+  }
+  if (state === "register") {
+    if (checkOrder(currentCustomer)) {
+      currentCustomer = new Customer();
+      burgerStack = [];
     }
   }
 }
@@ -381,7 +431,7 @@ function displayText() {
 }
 
 function drawNavBar() {
-  if (state !== "start" && state !== "tutorial") {
+  if (state !== "start") {
     let buttonWidth = GAME_WIDTH / NAV_BUTTONS.length;
   
     for (let i = 0; i < NAV_BUTTONS.length; i++) {
