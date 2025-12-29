@@ -341,7 +341,26 @@ function mousePressed() {
     click.play();
     state = "tutorial";
   }
-  else if (state === "grill"){
+  if (state === "produce"){
+    if (mouseHover(200, 200, 100, 100)) {
+       producePicked = "lettuce";
+       choppingProgress = 0;
+    }
+    if (mouseHover(350, 200, 100, 100)) {
+      producePicked = "tomato";
+      choppingProgress = 0;
+    }
+    if (producePicked){
+      choppingProgress+++;
+      if (choppingProgress >= FINISH_CHOPPING){
+        produceStock = producePicked + 1;
+        producePicked = "";
+        choppingProgress = 0;
+      }
+    }
+  }
+
+  if (state === "grill"){
      //pick up the raw patty but only once
   if (heldItem === 0 && mouseHover(RAW_PATTY_X, RAW_PATTY_Y, 100, 100)) {
     heldItem = "rawPatty";
@@ -368,8 +387,17 @@ function mousePressed() {
     }
   }
 }
-  else if (state === "assembly") {
-    
+  if (state === "assembly") {
+    if (item === "lettuce" || item === "tomato" || item === "pickle" || item === "cheese") {
+      if (produceStock <= 0) {
+        textSize(24);
+        fill("red");
+        text("Out of " + item + "!", GAME_WIDTH/2, GAME_HEIGHT - NAV_HEIGHT-50);
+        return;
+  
+      }
+      burgerStack.push(item);
+    }
   }
   if (state !== "start") {
     if (mouseY > height - NAV_HEIGHT) {
