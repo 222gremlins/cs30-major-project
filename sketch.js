@@ -7,11 +7,20 @@
 
 const GAME_WIDTH = 1900;
 const GAME_HEIGHT  = 900;
-const GRILL_WIDTH = 500;
-const GRILL_HEIGHT = 500;
+const GRILL_WIDTH = 750;
+const GRILL_HEIGHT = 575;
+const GRILL_X = 550;
+const GRILL_Y = 200;
+const SLOT_SIZE = 120;
+
 
 const NAV_HEIGHT = 80;
 const NAV_BUTTONS = ["produce", "grill", "assembly", "register"];
+
+const ASEMBLY_X = 120;
+const ASSEMBLY_Y = 200;
+const ITEM_SIZE = 90;
+const ITEM_PADDING = 20;
 
 const ASSEMBLY_ITEMS = [
   "bun top",
@@ -30,8 +39,9 @@ const BUTTON_HEIGHT = 100;
 
 let currentCustomer;
 
-const RAW_PATTY_X = 100;
-const RAW_PATTY_Y = 300;
+const RAW_PATTY_X = 295;
+const RAW_PATTY_Y = 560;
+const RAW_PATTY_SIZE = 100;
 const HALF_TIME = 180;
 const PERFECT_TIME = 360;
 const BURNT_TIME = 540;
@@ -45,9 +55,15 @@ let tutorialButton;
 
 // patties
 let rawPatty, cookingPatty, perfectPatty, overcookedPatty;
+let rawPatties = 0;
+let halfPatties = 0;
+let perfectPatties = 0;
+let burntPatties = 0;
+let totalPatties = rawPatties + halfPatties + perfectPatties + burntPatties;
 
 // toppings
 let pickle, cheese, tomato, onion, lettuce;
+let pickleStock, cheeseStock, tomatoStock, lettuceStock;
 
 // sauces
 let bbq, mustard, ketchup, mayo;
@@ -84,11 +100,6 @@ class Customer {
   generateOrder() {
     let base = ["bun bottom", "patty", "bun top"];
     let extras = ["cheese", "lettuce", "tomato", "pickle"];
-    
-    if (random() < 0.6) {
-      base.splice(2, 0, random(extras));
-    }
-    return base;
   }
   display() {
     fill(255);
@@ -107,11 +118,11 @@ class Customer {
 
 // either make this class an extention or maybe not depending on how it all goes
 class Patty {
-  constructor(x, y) {
+  constructor(slot) {
     // setting size/location
-    this.x = x;
-    this.y = y;
-    this.size = 100;
+    this.size = SLOT_SIZE * 0.8;
+    this.x = slot.x + SLOT_SIZE/2 - this.size/2;
+    this.y = slot.y + SLOT_SIZE/2 - this.size/2;
 
     // setting beginning state and cooking variables
     this.state = "raw";
@@ -126,10 +137,10 @@ class Patty {
     if (this.cookingTime <= HALF_TIME) {
       this.state = "raw";
     }
-    else if (this.cookingTime <= PERFECT_TIME) {
+    if (this.cookingTime <= PERFECT_TIME) {
       this.state = "half";
     }
-    else if (this.cookingTime <= BURNT_TIME) {
+    if (this.cookingTime <= BURNT_TIME) {
       this.state = "perfect";
     }
     else {
@@ -138,17 +149,17 @@ class Patty {
   }
 
   display() {
-    //imageMode(CENTER);
+    imageMode(CORNER);
     if (this.state === "raw"){
       image(rawPatty, this.x, this.y, this.size, this.size);
     }
-    else if (this.state === "half") {
+    if (this.state === "half") {
       image(cookingPatty, this.x, this.y, this.size, this.size);
     }
-    else if (this.state === "perfect") {
+    if (this.state === "perfect") {
       image(perfectPatty, this.x, this.y,this.size, this.size);
     }
-    else if (this.state === "overcooked") {
+    if (this.state === "overcooked") {
       image(overcookedPatty, this.x, this.y, this.size, this.size);
     }
   }
@@ -199,14 +210,7 @@ function setup() {
 function draw() {
   background(220);
   drawState();
-  if (heldItem === "rawPatty") {
-  image(rawPatty, mouseX - 50, mouseY - 50, 100, 100);
-}
-else if (heldItem instanceof Patty) {
-  heldItem.x = mouseX - 50;
-  heldItem.y = mouseY - 50;
-  heldItem.display();
-}
+  
 }
 
 function drawState() {
@@ -269,18 +273,28 @@ function drawState() {
     fill(0);
     text("INGREDIENTS", 200, 110);
 
-    for (let i = 0; i < ASSEMBLY_ITEMS.length; i++) {
-      let y = 200 + i*45;
+    let assemblyY = ASSEMBLY_Y;
 
-      fill("white");
-      rect(150, y, 100, 30, 10);
+  imageMode(CORNER);
+  
+  // patty
+  drawAssemblyItem(perfectPatty, ASEMBLY_X, assemblyY, perfectPatties);
+  assemblyY += ITEM_SIZE + ITEM_PADDING;
 
-      fill(0);
-      textSize(18);
-      textAlign(CENTER, CENTER);
-      text(ASSEMBLY_ITEMS[i], 200, y + 15);
-      textAlign(LEFT);
-    }
+  // cheese
+  drawAssemblyItem(cheese, ASEMBLY_X, assemblyY, cheeseStock);
+  assemblyY += ITEM_SIZE + ITEM_PADDING;
+  // lettuce
+  drawAssemblyItem(lettuce, ASEMBLY_X, assemblyY, lettuceStock);
+  assemblyY += ITEM_SIZE + ITEM_PADDING;
+
+  // tomato
+  drawAssemblyItem(tomato, ASEMBLY_X, assemblyY, tomatoStock);
+  assemblyY += ITEM_SIZE + ITEM_PADDING;
+
+  // pickle
+  drawAssemblyItem(pickle, ASEMBLY_X, assemblyY, pickleStock);
+  assemblyY += ITEM_SIZE + ITEM_PADDING;
     fill(150);
     textSize(18);
     text("burger builds here?", 800, 300);
@@ -299,16 +313,12 @@ function drawState() {
     imageMode(CORNER);
     image(grillImg, 0, 0, GAME_WIDTH, GAME_HEIGHT);
     imageMode(CENTER);
-    checkHover();
     fill("gray");
-    rect(300, 150, GRILL_WIDTH, GRILL_HEIGHT, 20);
-    
-    image(rawPatty, RAW_PATTY_X, RAW_PATTY_Y, 100, 100);
+    rect(GRILL_X, GRILL_Y, GRILL_WIDTH, GRILL_HEIGHT, 20);
 
-    fill(0);
-    textSize(16);
-    textAlign(CENTER);
-    text("RAW PATTY", RAW_PATTY_X + 50, RAW_PATTY_Y + 120);
+    imageMode(CORNER);
+    image(rawPatty, RAW_PATTY_X, RAW_PATTY_Y, 225, 120);
+    imageMode(CENTER);
 
     for (let slot of grillSlots) {
       if (slot.locked) {
@@ -336,6 +346,19 @@ function drawState() {
   drawNavBar();
 }
 
+function drawAssemblyItem(img, x, y, stock) {
+  fill(255);
+  rect(x - 10, y - 10, ITEM_SIZE + 20, ITEM_SIZE + 20, 12);
+
+  image(img, x, y, ITEM_SIZE, ITEM_SIZE);
+
+  // stock label
+  fill(0);
+  textSize(18);
+  textAlign(RIGHT, TOP);
+  text(stock, x + ITEM_SIZE, y);
+}
+
 function mousePressed() {
   if (state === "start" && isHovered) {
     click.play();
@@ -351,7 +374,7 @@ function mousePressed() {
       choppingProgress = 0;
     }
     if (producePicked){
-      choppingProgress+++;
+      choppingProgress++;
       if (choppingProgress >= FINISH_CHOPPING){
         produceStock = producePicked + 1;
         producePicked = "";
@@ -362,39 +385,42 @@ function mousePressed() {
 
   if (state === "grill"){
      //pick up the raw patty but only once
-  if (heldItem === 0 && mouseHover(RAW_PATTY_X, RAW_PATTY_Y, 100, 100)) {
-    heldItem = "rawPatty";
-    click.play();
-    return;
-  }
-
-  // th e slots
-  for (let slot of grillSlots) {
-    //placing raw patty on grill
-    if (heldItem === "rawPatty" && !slot.locked && slot.patty === 0 && mouseHover(slot.x, slot.y, 120, 120)){
-      slot.patty = new Patty(slot.x + 10, slot.y + 10);
-      slot.patty.onGrill = true;
-      heldItem = 0;
-      return;
-    }
-
-    //picking up the cooked patty
-    if (heldItem === 0 && slot.patty && mouseHover(slot.patty.x, slot.patty.y, slot.patty.size, slot.patty.size)){
-      heldItem = slot.patty;
-      slot.patty.onGrill = false;
-      slot.patty = 0;
-      return;
+    if (mouseHover(RAW_PATTY_X, RAW_PATTY_Y, 225, 120)) {
+      let slot = findEmptySlot();
+      if (slot){
+        slot.patty = new Patty(slot);
+        click.play();
     }
   }
-}
+    // the slots
+    for (let slot of grillSlots) {
+      if(slot.patty && mouseHover(slot.x, slot.y, SLOT_SIZE, SLOT_SIZE)){
+        if (slot.patty.state === "raw") {
+          rawPatties++;
+        }
+        if (slot.patty.state === "half") {
+          halfPatties++;
+        }
+        if (slot.patty.state === "perfect") {
+          perfectPatties++;
+        }
+        if (slot.patty.state === "overcooked") {
+          burntPatties++;
+      }
+        slot.patty = 0;
+        click.play();
+      }
+    }
+  }
+
   if (state === "assembly") {
+    let item = "";
+    let produceStock = 5;
     if (item === "lettuce" || item === "tomato" || item === "pickle" || item === "cheese") {
       if (produceStock <= 0) {
         textSize(24);
         fill("red");
         text("Out of " + item + "!", GAME_WIDTH/2, GAME_HEIGHT - NAV_HEIGHT-50);
-        return;
-  
       }
       burgerStack.push(item);
     }
@@ -403,7 +429,6 @@ function mousePressed() {
     if (mouseY > height - NAV_HEIGHT) {
       let index = floor(mouseX/(GAME_WIDTH/NAV_BUTTONS.length));
       state = NAV_BUTTONS[index];
-      return;
     }
   }
   if (state === "register") {
@@ -413,6 +438,7 @@ function mousePressed() {
     }
   }
 }
+
 
 
 // checks if the mouse is hovering above buttons/items and gives back true/false
@@ -484,18 +510,26 @@ function drawNavBar() {
 
 function setupGrillSlots() {
   grillSlots = [];
-  let startX = 330;
-  let startY = 180;
-  let spacing = 160;
-
-  for (let row = 0; row < 3; row++) {
-    for (let col = 0; col < 3; col++) {
+  let paddingX = (GRILL_WIDTH-(SLOT_SIZE*4))/5;
+  let paddingY = (GRILL_HEIGHT-(SLOT_SIZE*4))/5;
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 4; col++) {
+      let x = GRILL_X + paddingX + col * (SLOT_SIZE + paddingX);
+      let y = GRILL_Y + paddingY + row * (SLOT_SIZE + paddingY);
       grillSlots.push({
-        x: startX + col*spacing,
-        y: startY + row*spacing,
+        x: x,
+        y: y,
         patty: 0,
         locked: grillSlots.length >= unlockedSlots
       });
+    }
+  }
+}
+
+function findEmptySlot() {
+  for (let slot of grillSlots) {
+    if (!slot.locked && slot.patty === 0) {
+      return slot;
     }
   }
 }
