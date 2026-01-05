@@ -18,7 +18,7 @@ const NAV_HEIGHT = 80;
 const NAV_BUTTONS = ["produce", "grill", "assembly", "register"];
 
 const ASEMBLY_X = 120;
-const ASSEMBLY_Y = 200;
+const ASSEMBLY_START_Y = 100;
 const ITEM_SIZE = 90;
 const ITEM_PADDING = 20;
 
@@ -42,9 +42,9 @@ let currentCustomer;
 const RAW_PATTY_X = 295;
 const RAW_PATTY_Y = 560;
 const RAW_PATTY_SIZE = 100;
-const HALF_TIME = 180;
-const PERFECT_TIME = 360;
-const BURNT_TIME = 540;
+const HALF_TIME = 150;
+const PERFECT_TIME = 300;
+const BURNT_TIME = 500;
 
 //background images, buttons and icons
 let startImg;
@@ -63,10 +63,11 @@ let totalPatties = rawPatties + halfPatties + perfectPatties + burntPatties;
 
 // toppings
 let pickle, cheese, tomato, onion, lettuce;
-let pickleStock, cheeseStock, tomatoStock, lettuceStock;
+let pickleStock, cheeseStock, tomatoStock, lettuceStock, onionStock;
 
 // sauces
 let bbq, mustard, ketchup, mayo;
+let bbqSquirt, mustardSquirt, ketchupSquirt, mayoSquirt;
 
 // sound effects
 let click, backgroundMusic, sizzle, sauceSqueeze;
@@ -99,7 +100,8 @@ class Customer {
   }
   generateOrder() {
     let base = ["bun bottom", "patty", "bun top"];
-    let extras = ["cheese", "lettuce", "tomato", "pickle"];
+    let extras = ["cheese", "lettuce", "tomato", "pickle", "onion", "mayo", "ketchup", "mustard"];
+
   }
   display() {
     fill(255);
@@ -112,7 +114,7 @@ class Customer {
       text("- " + this.order[i], 70, 220 + i * 30);
     }
 
-    text("Patience: " + this.patience, 70, 350);
+    text("custmer patience: " + this.patience, 70, 350);
   }
 }
 
@@ -133,19 +135,21 @@ class Patty {
   updatePatty() {
     if (this.onGrill) {
       this.cookingTime ++;   // set the constants
+      if (this.cookingTime <= HALF_TIME) {
+        this.state = "raw";
+      }
+      else if (this.cookingTime <= PERFECT_TIME) {
+        this.state = "half";
+      }
+      else if (this.cookingTime <= BURNT_TIME) {
+        this.state = "perfect";
+      }
+      else {
+        this.state = "overcooked";
+      }
     }
-    if (this.cookingTime <= HALF_TIME) {
-      this.state = "raw";
-    }
-    if (this.cookingTime <= PERFECT_TIME) {
-      this.state = "half";
-    }
-    if (this.cookingTime <= BURNT_TIME) {
-      this.state = "perfect";
-    }
-    else {
-      this.state = "overcooked";
-    }
+    
+    console.log(this.state);
   }
 
   display() {
@@ -210,6 +214,7 @@ function setup() {
 function draw() {
   background(220);
   drawState();
+  drawNavBar();
   
 }
 
@@ -258,46 +263,32 @@ function drawState() {
     text("Click to submit burger here", GAME_WIDTH/2, 222);
   }
   if (state === "assembly"){
-    fill("white");
-    rect(600, 120, 400, 500, 20);
+    let assemblyY = ASSEMBLY_START_Y;
 
-    fill(0);
-    textSize(32);
-    textAlign(CENTER);
-    text("ASSEMBLY AREA", 800, 110);
-
-    fill("#E5DACA");
-    rect(100, 150, 200, 500, 20);
-
-    textSize(22);
-    fill(0);
-    text("INGREDIENTS", 200, 110);
-
-    let assemblyY = ASSEMBLY_Y;
-
-  imageMode(CORNER);
+    imageMode(CORNER);
   
-  // patty
-  drawAssemblyItem(perfectPatty, ASEMBLY_X, assemblyY, perfectPatties);
-  assemblyY += ITEM_SIZE + ITEM_PADDING;
+    // patty
+    drawAssemblyItem(perfectPatty, ASEMBLY_X, assemblyY, perfectPatties);
+    assemblyY += ITEM_SIZE + ITEM_PADDING;
 
-  // cheese
-  drawAssemblyItem(cheese, ASEMBLY_X, assemblyY, cheeseStock);
-  assemblyY += ITEM_SIZE + ITEM_PADDING;
-  // lettuce
-  drawAssemblyItem(lettuce, ASEMBLY_X, assemblyY, lettuceStock);
-  assemblyY += ITEM_SIZE + ITEM_PADDING;
+    // cheese
+    drawAssemblyItem(cheese, ASEMBLY_X, assemblyY, cheeseStock);
+    assemblyY += ITEM_SIZE + ITEM_PADDING;
+    // lettuce
+    drawAssemblyItem(lettuce, ASEMBLY_X, assemblyY, lettuceStock);
+    assemblyY += ITEM_SIZE + ITEM_PADDING;
 
-  // tomato
-  drawAssemblyItem(tomato, ASEMBLY_X, assemblyY, tomatoStock);
-  assemblyY += ITEM_SIZE + ITEM_PADDING;
+    // tomato
+    drawAssemblyItem(tomato, ASEMBLY_X, assemblyY, tomatoStock);
+    assemblyY += ITEM_SIZE + ITEM_PADDING;
 
-  // pickle
-  drawAssemblyItem(pickle, ASEMBLY_X, assemblyY, pickleStock);
-  assemblyY += ITEM_SIZE + ITEM_PADDING;
-    fill(150);
-    textSize(18);
-    text("burger builds here?", 800, 300);
+    // pickle
+    drawAssemblyItem(pickle, ASEMBLY_X, assemblyY, pickleStock);
+    assemblyY += ITEM_SIZE + ITEM_PADDING;
+
+    // onion
+    drawAssemblyItem(onion, ASEMBLY_X, assemblyY, onionStock);
+    assemblyY += ITEM_SIZE + ITEM_PADDING; 
 
     let x = 800;
     let y = 500;
@@ -343,7 +334,6 @@ function drawState() {
       }
     }
   }
-  drawNavBar();
 }
 
 function drawAssemblyItem(img, x, y, stock) {
@@ -365,9 +355,10 @@ function mousePressed() {
     state = "tutorial";
   }
   if (state === "produce"){
+    let producePicked;
     if (mouseHover(200, 200, 100, 100)) {
-       producePicked = "lettuce";
-       choppingProgress = 0;
+      producePicked = "lettuce";
+      choppingProgress = 0;
     }
     if (mouseHover(350, 200, 100, 100)) {
       producePicked = "tomato";
@@ -384,14 +375,14 @@ function mousePressed() {
   }
 
   if (state === "grill"){
-     //pick up the raw patty but only once
+    //puts patty onto grill
     if (mouseHover(RAW_PATTY_X, RAW_PATTY_Y, 225, 120)) {
       let slot = findEmptySlot();
       if (slot){
         slot.patty = new Patty(slot);
         click.play();
+      }
     }
-  }
     // the slots
     for (let slot of grillSlots) {
       if(slot.patty && mouseHover(slot.x, slot.y, SLOT_SIZE, SLOT_SIZE)){
@@ -406,7 +397,7 @@ function mousePressed() {
         }
         if (slot.patty.state === "overcooked") {
           burntPatties++;
-      }
+        }
         slot.patty = 0;
         click.play();
       }
@@ -510,10 +501,10 @@ function drawNavBar() {
 
 function setupGrillSlots() {
   grillSlots = [];
-  let paddingX = (GRILL_WIDTH-(SLOT_SIZE*4))/5;
-  let paddingY = (GRILL_HEIGHT-(SLOT_SIZE*4))/5;
-  for (let row = 0; row < 4; row++) {
-    for (let col = 0; col < 4; col++) {
+  let paddingX = (GRILL_WIDTH-SLOT_SIZE*3)/4;
+  let paddingY = (GRILL_HEIGHT-SLOT_SIZE*3)/4;
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
       let x = GRILL_X + paddingX + col * (SLOT_SIZE + paddingX);
       let y = GRILL_Y + paddingY + row * (SLOT_SIZE + paddingY);
       grillSlots.push({
