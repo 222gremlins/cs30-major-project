@@ -82,13 +82,14 @@ let isHovered = false;
 let heldItem = 0; //null if no item is held
 
 // game state variable
-let state = "start";
+let state = "grill";
 
 // testing things
 let grillSlots = [];
 let burgerStack = [];
 let unlockedSlots = 2;
 let tutorialButtonPressed = true;
+let income;
 
 class Customer {
   constructor() {
@@ -106,7 +107,6 @@ class Customer {
   generateOrder() {
     let base = ["bun bottom", "patty", "bun top"];
     let extras = ["cheese", "lettuce", "tomato", "pickle", "onion", "mayo", "ketchup", "mustard"];
-
   }
   display() {
     fill(255);
@@ -309,17 +309,18 @@ function drawState() {
         slot.patty.display();
       }
     }
-    if (rawPatties > 0) {
-      image(rawPatty, 800, 800);
-    }
-    else if (halfPatties > 0) {
-      image(cookingPatty, 800, 800);
+    fill("red");
+    circle(1465, 700, 6);
+    
+    //not sure how to fix this 
+    if (halfPatties > 0) {
+      image(cookingPatty, 1465, 700, 225, 120);
     }
     else if (perfectPatties > 0) {
-      image(perfectPatty, 800, 800);
+      image(perfectPatty, 1465, 700, 225, 120);
     }
     else {
-      image(overcookedPatty, 800, 800);
+      image(overcookedPatty, 1465, 700, 225, 120);
     }
   }
 }
@@ -407,7 +408,7 @@ function mousePressed() {
       if (produceStock <= 0) {
         textSize(24);
         fill("red");
-        text("Out of " + item + "!", GAME_WIDTH/2, GAME_HEIGHT - NAV_HEIGHT-50);
+        text("Out of " + item + "!", GAME_WIDTH/2, GAME_HEIGHT/2);
       }
       burgerStack.push(item);
     }
@@ -437,19 +438,19 @@ function checkHover() {
     else {
       isHovered = false;
     }
-  // }
-  // if (state === "tutorial"){
+    // }
+    // if (state === "tutorial"){
 
-  // }
-  // if (state === "grill"){
-  //   if (mouseX > RAW_PATTY_X && mouseX < RAW_PATTY_X + 100 && mouseY > RAW_PATTY_Y && mouseY < RAW_PATTY_Y + 100) {
-  //     isHovered = true;
-  //   }
-  //   else {
-  //     isHovered = false;
-  //   }
-  // }
-  // if (state === "assembly"){
+    // }
+    // if (state === "grill"){
+    //   if (mouseX > RAW_PATTY_X && mouseX < RAW_PATTY_X + 100 && mouseY > RAW_PATTY_Y && mouseY < RAW_PATTY_Y + 100) {
+    //     isHovered = true;
+    //   }
+    //   else {
+    //     isHovered = false;
+    //   }
+    // }
+    // if (state === "assembly"){
   
   } 
 }
@@ -503,22 +504,19 @@ function setupAssembly() {
   // // patty
   // drawAssemblyItem(perfectPatty, ASEMBLY_X, assemblyY, perfectPatties);
   // assemblyY += ITEM_SIZE + ITEM_PADDING;
-
+  drawAssemblyItem(patty, ASEMBLY_X, );
   // tomato
   drawAssemblyItem(tomato, ASEMBLY_X, assemblyY, tomatoStock);
   assemblyY += ITEM_SIZE + ITEM_PADDING;
-
   // lettuce
   drawAssemblyItem(lettuce, ASEMBLY_X, assemblyY, lettuceStock);
   assemblyY += ITEM_SIZE + ITEM_PADDING;
   // onion
   drawAssemblyItem(onion, ASEMBLY_X, assemblyY, onionStock);
   assemblyY += ITEM_SIZE + ITEM_PADDING; 
-  
   // pickle
   drawAssemblyItem(pickle, ASEMBLY_X, assemblyY, pickleStock);
   assemblyY += ITEM_SIZE + ITEM_PADDING;
-  
   // cheese
   drawAssemblyItem(cheese, ASEMBLY_X, assemblyY, cheeseStock);
   assemblyY += ITEM_SIZE + ITEM_PADDING;
