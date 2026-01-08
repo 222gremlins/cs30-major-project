@@ -323,6 +323,20 @@ function drawState() {
       image(overcookedPatty, 1465, 700, 225, 120);
     }
   }
+  if (state === "produce") {
+    //trays
+    fill("gray");
+    rect(0, 0, GAME_WIDTH/4, GAME_HEIGHT);
+    rect(GAME_WIDTH/4, 0, GAME_WIDTH/4, GAME_HEIGHT);
+    rect(GAME_WIDTH/2, 0, GAME_WIDTH/4, GAME_HEIGHT);
+    rect(GAME_WIDTH-GAME_WIDTH/4, 0, GAME_WIDTH/4, GAME_HEIGHT);
+    // at top of tray/buckets
+    fill("white");
+    rect(0, 0, GAME_WIDTH/4, GAME_HEIGHT/2);
+    rect(GAME_WIDTH/4, 0, GAME_WIDTH/4, GAME_HEIGHT/2);
+    rect(GAME_WIDTH/2, 0, GAME_WIDTH/4, GAME_HEIGHT/2);
+    rect(GAME_WIDTH-GAME_WIDTH/4, 0, GAME_WIDTH/4, GAME_HEIGHT/2);
+  }
 }
 
 function drawAssemblyItem(img, x, y, stock) {
@@ -369,6 +383,7 @@ function mousePressed() {
         choppingProgress = 0;
       }
     }
+
   }
 
   if (state === "grill"){
@@ -451,7 +466,7 @@ function checkHover() {
     //   }
     // }
     // if (state === "assembly"){
-  
+    
   } 
 }
 
@@ -504,7 +519,7 @@ function setupAssembly() {
   // // patty
   // drawAssemblyItem(perfectPatty, ASEMBLY_X, assemblyY, perfectPatties);
   // assemblyY += ITEM_SIZE + ITEM_PADDING;
-  drawAssemblyItem(patty, ASEMBLY_X, );
+  // drawAssemblyItem(patty, ASEMBLY_X, );
   // tomato
   drawAssemblyItem(tomato, ASEMBLY_X, assemblyY, tomatoStock);
   assemblyY += ITEM_SIZE + ITEM_PADDING;
@@ -582,4 +597,4 @@ function die() {
 
 // Receipt in corner - can be brought out/pushed in
 
-// Introductory Dialogue, background and gather player name/ tutorial that can be SKIPPED
+// Introductory Dialogue, background and gather player name/ tutorial that can be SKIPPEDFcl
