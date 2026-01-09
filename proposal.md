@@ -5,9 +5,9 @@
 
 ## Needs to Have
 - 3 different orders
-- At least different parts of assembly Cutting, Cooking, Assembling all in one screen
-- Working click the item and it automatically goes onto burger
-- Some form of introductory dialogue and sound effects.
+- At least different parts of assembly Cutting, Cooking, Assembling all in one screen --> done
+- Working click the item and it automatically goes onto burger --> done
+- Some form of introductory dialogue and sound effects. 
 
 
 ## Nice to Have
@@ -16,4 +16,4 @@
 - Nice images/sprites making it look realistic, maybe even having animated ones.
 - Money being able to upgrade at least one appliance (makes it faster) 
 - drag & drop system for assembly
-- Two different screens (grill/assembly)
+- Two different screens (grill/assembly) --> done

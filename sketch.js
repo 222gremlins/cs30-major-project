@@ -5,6 +5,9 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
+
+// look into setting textAlign or imagemode through setting it to something ex. textAlign = ...
+
 const GAME_WIDTH = 1900;
 const GAME_HEIGHT  = 900;
 const GRILL_WIDTH = 750;
@@ -30,6 +33,14 @@ const ASSEMBLY_ITEMS = [
   "lettuce",
   "tomato",
   "bun bottom"
+];
+
+const CUSTOMERS = [
+  "monkey",
+  "son",
+  "cinema",
+  "tim",
+  "john"
 ];
 
 //Patience variables 
@@ -76,7 +87,6 @@ let bbqSquirt, mustardSquirt, ketchupSquirt, mayoSquirt;
 
 // sound effects
 let click, backgroundMusic, sizzle, sauceSqueeze;
-
 
 let isHovered = false;
 let heldItem = 0; //null if no item is held
@@ -176,7 +186,6 @@ class Patty {
     return mouseHover(this.x, this.y, this.size, this.size);
   }
 }
-
 
 function preload() {
   // images/sounds all being loaded before they are used
@@ -332,10 +341,10 @@ function drawState() {
     rect(GAME_WIDTH-GAME_WIDTH/4, 0, GAME_WIDTH/4, GAME_HEIGHT);
     // at top of tray/buckets
     fill("white");
-    rect(0, 0, GAME_WIDTH/4, GAME_HEIGHT/2);
-    rect(GAME_WIDTH/4, 0, GAME_WIDTH/4, GAME_HEIGHT/2);
-    rect(GAME_WIDTH/2, 0, GAME_WIDTH/4, GAME_HEIGHT/2);
-    rect(GAME_WIDTH-GAME_WIDTH/4, 0, GAME_WIDTH/4, GAME_HEIGHT/2);
+    rect(20, 20, GAME_WIDTH/4-40, GAME_HEIGHT/2-40);
+    rect(GAME_WIDTH/4+20, 20, GAME_WIDTH/4-40, GAME_HEIGHT/2-4-40);
+    rect(GAME_WIDTH/2+20, 20, GAME_WIDTH/4-40, GAME_HEIGHT/2-40);
+    rect(GAME_WIDTH-GAME_WIDTH/4+20, 0+20, GAME_WIDTH/4-40, GAME_HEIGHT/2-40);
   }
 }
 
