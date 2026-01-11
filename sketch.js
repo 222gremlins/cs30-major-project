@@ -57,6 +57,11 @@ const HALF_TIME = 150;
 const PERFECT_TIME = 300;
 const BURNT_TIME = 500;
 
+// chopping variables
+const FINISH_CHOPPING = 50;
+let choppingProgress = 0;
+let producePicked = "";
+
 //background images, buttons and icons
 let startImg;
 let grillImg;
@@ -115,9 +120,35 @@ class Customer {
     return this.patience <= 0;
   }
   generateOrder() {
+    let order = [];
+
     let base = ["bun bottom", "patty", "bun top"];
-    let extras = ["cheese", "lettuce", "tomato", "pickle", "onion", "mayo", "ketchup", "mustard"];
+    let extras = ["cheese", "lettuce", "tomato", "pickle", "onion"];
+    let sauces = ["ketchup", "mustard", "mayo", "bbq"];
+
+    order.push("bun bottom");
+
+    let pattyCount = random(0, 2); 
+    for (let i = 0; i < pattyCount; i++) {
+      order.push("patty");
+    }
+    //creates a random topping/sauce count for the order
+    let extraCount = floor(random(0, 4));
+    //built in shuffle function from p5.js
+    shuffle(extras, true);
+
+  for (let i = 0; i < extraCount; i++) {
+    order.push(extras[i]);
   }
+  // 70% chance of sauce on the orde
+  if (random() < 0.7) {
+    order.push(random(sauces));
+  }
+
+  order.push("bun top");
+  return order;
+}
+  
   display() {
     fill(255);
     rect(50, 150, 260, 300, 20);
@@ -229,8 +260,8 @@ function setup() {
 function draw() {
   background(220);
   drawState();
+  updateProduce();
   drawNavBar();
-  
 }
 
 function drawState() {
@@ -376,13 +407,25 @@ function mousePressed() {
   }
   if (state === "produce"){
     let producePicked;
-    if (mouseHover(200, 200, 100, 100)) {
+    if (mouseHover(20, 20, GAME_WIDTH/4-40, GAME_HEIGHT/2-40)) {
       producePicked = "lettuce";
       choppingProgress = 0;
+      click.play();
     }
-    if (mouseHover(350, 200, 100, 100)) {
+    else if (mouseHover(GAME_WIDTH/4+20, 20, GAME_WIDTH/4-40, GAME_HEIGHT/2-40)) {
       producePicked = "tomato";
       choppingProgress = 0;
+      click.play();
+    }
+    else if (mouseHover(GAME_WIDTH/2+20, 20, GAME_WIDTH/4-40, GAME_HEIGHT/2-40)) {
+      producePicked = "onion";
+      choppingProgress = 0;
+      click.play();
+    }
+    else if (mouseHover(GAME_WIDTH-GAME_WIDTH/4+20, 20, GAME_WIDTH/4-40, GAME_HEIGHT/2-40)) {
+      producePicked = "pickle";
+      choppingProgress = 0;
+      click.play();
     }
     if (producePicked){
       choppingProgress++;
@@ -582,6 +625,21 @@ function findEmptySlot() {
   }
 }
 
+function updateProduce() {
+  if (state === "produce" && producePicked !== "" && mouseIsPressed) {
+    choppingProgress++;
+    if (choppingProgress >= FINISH_CHOPPING) {
+      if (producePicked === "lettuce") lettuceStock++;
+      if (producePicked === "tomato") tomatoStock++;
+      if (producePicked === "onion") onionStock++;
+      if (producePicked === "pickle") pickleStock++;
+
+      producePicked = "";
+      choppingProgress = 0;
+    }
+  }
+}
+
 function addToBurger(item) {
   burgerStack.push(item);
 }
@@ -597,7 +655,6 @@ function checkOrder(customer) {
   }
   return true;
 }
-
 // kills the window if they do something bad
 function die() {
   sleep(1000);
