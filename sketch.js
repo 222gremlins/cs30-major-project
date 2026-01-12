@@ -25,23 +25,6 @@ const ASSEMBLY_START_Y = 100;
 const ITEM_SIZE = 90;
 const ITEM_PADDING = 20;
 
-const ASSEMBLY_ITEMS = [
-  "bun top",
-  "patty",
-  "cheese",
-  "pickle",
-  "lettuce",
-  "tomato",
-  "bun bottom"
-];
-
-const CUSTOMERS = [
-  "monkey",
-  "son",
-  "cinema",
-  "tim",
-  "john"
-];
 
 //Patience variables 
 const MAX_PATIENCE = 100;
@@ -66,7 +49,7 @@ let producePicked = "";
 let startImg;
 let grillImg;
 let assemblyImg;
-
+let speechImg;
 let playButton;
 let tutorialButton;
 
@@ -89,6 +72,8 @@ let onionStock = 0;
 // sauces
 let bbq, mustard, ketchup, mayo;
 let bbqSquirt, mustardSquirt, ketchupSquirt, mayoSquirt;
+
+let thinkingMonkey, son, tim, john, babySun;
 
 // sound effects
 let click, backgroundMusic, sizzle, sauceSqueeze;
@@ -122,9 +107,8 @@ class Customer {
   generateOrder() {
     let order = [];
 
-    let base = ["bun bottom", "patty", "bun top"];
     let extras = ["cheese", "lettuce", "tomato", "pickle", "onion"];
-    let sauces = ["ketchup", "mustard", "mayo", "bbq"];
+    let sauces = ["ketchup", "mustard", "mayo", "bbq sauce"];
 
     order.push("bun bottom");
 
@@ -137,30 +121,31 @@ class Customer {
     //built in shuffle function from p5.js
     shuffle(extras, true);
 
-  for (let i = 0; i < extraCount; i++) {
-    order.push(extras[i]);
-  }
-  // 70% chance of sauce on the orde
-  if (random() < 0.7) {
-    order.push(random(sauces));
-  }
+    for (let i = 0; i < extraCount; i++) {
+      order.push(extras[i]);
+    }
+    // 70% chance of sauce on the orde
+    if (random() < 0.7) {
+      order.push(random(sauces));
+    }
 
-  order.push("bun top");
-  return order;
-}
+    order.push("bun top");
+    return order;
+  }
   
   display() {
     fill(255);
     rect(50, 150, 260, 300, 20);
     fill(0);
+    textAlign(CENTER);
     textSize(18);
-    text("ORDER:", 70, 190);
+    text("ORDER:", 170, 190);
 
     for (let i = 0; i < this.order.length; i++) {
-      text("- " + this.order[i], 70, 220 + i * 30);
+      text("- " + this.order[i], 170, 220 + i * 30);
     }
 
-    text("custmer patience: " + this.patience, 70, 350);
+    text("customer patience: " + this.patience, 170, 500);
   }
 }
 
@@ -226,6 +211,14 @@ function preload() {
   grillImg = loadImage("assets/grillbackground.png");
   playButton = loadImage("assets/playbutton.png");
   assemblyImg = loadImage("assets/assemblybackground.png");
+  speechImg = loadImage("assets/speech-bubble.png");
+
+  //customers
+  thinkingMonkey = loadImage("assets/thinkingmonkey.jpg");
+  son = loadImage("assets/son.jpg");
+  // babySun = loadImage("assets/son.jpg");
+  // tim = loadImage("assets/son.jpg");
+  // john = loadImage("assets/son.jpg");
 
   // patties
   rawPatty = loadImage("assets/rawpatty.png");
@@ -302,11 +295,12 @@ function drawState() {
     textSize(40);
     textAlign(CENTER);
     text("REGISTER", GAME_WIDTH/2, 100);
-
     currentCustomer.display();
-
     textSize(22);
     text("Click to submit burger here", GAME_WIDTH/2, 222);
+
+    image(thinkingMonkey, GAME_WIDTH/2, GAME_HEIGHT/2);
+    image(speechImg, GAME_WIDTH/2-300, GAME_HEIGHT/2-200, speechImg*0.5, speechImg*0.5);
   }
   if (state === "assembly"){
     background("black");
@@ -351,17 +345,6 @@ function drawState() {
     }
     fill("red");
     circle(1465, 700, 6);
-    
-    //not sure how to fix this 
-    if (halfPatties > 0) {
-      image(cookingPatty, 1465, 700, 225, 120);
-    }
-    else if (perfectPatties > 0) {
-      image(perfectPatty, 1465, 700, 225, 120);
-    }
-    else {
-      image(overcookedPatty, 1465, 700, 225, 120);
-    }
   }
   if (state === "produce") {
     //trays
@@ -379,13 +362,14 @@ function drawState() {
   }
 }
 
+
 function drawAssemblyItem(img, x, y, stock) {
   fill(255);
   rect(x - 10, y - 10, ITEM_SIZE + 20, ITEM_SIZE + 20, 12);
   stock = str(stock);
   image(img, x, y, ITEM_SIZE, ITEM_SIZE);
 
-  // stock label
+  //stock label
   fill(0);
   textSize(18);
   textAlign(CENTER); 
@@ -435,7 +419,6 @@ function mousePressed() {
         choppingProgress = 0;
       }
     }
-
   }
 
   if (state === "grill"){
@@ -629,17 +612,23 @@ function updateProduce() {
   if (state === "produce" && producePicked !== "" && mouseIsPressed) {
     choppingProgress++;
     if (choppingProgress >= FINISH_CHOPPING) {
-      if (producePicked === "lettuce") lettuceStock++;
-      if (producePicked === "tomato") tomatoStock++;
-      if (producePicked === "onion") onionStock++;
-      if (producePicked === "pickle") pickleStock++;
-
+      if (producePicked === "lettuce") {
+        lettuceStock++;
+      } 
+      if (producePicked === "tomato") {
+        tomatoStock++;
+      }
+      if (producePicked === "onion") {
+        onionStock++;
+      }
+      if (producePicked === "pickle") {
+        pickleStock++;
+      }
       producePicked = "";
       choppingProgress = 0;
     }
   }
 }
-
 function addToBurger(item) {
   burgerStack.push(item);
 }
@@ -660,7 +649,3 @@ function die() {
   sleep(1000);
   window.close();
 }
-
-// Receipt in corner - can be brought out/pushed in
-
-// Introductory Dialogue, background and gather player name/ tutorial that can be SKIPPEDFcl

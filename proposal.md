@@ -13,7 +13,7 @@
 ## Nice to Have
 - Timed aspect for orders that affect customer satisfaction and change with how "complex" the order is
 - Mini Games for actions like cutting, cooking, etc.
-- Nice images/sprites making it look realistic, maybe even having animated ones.
+- Nice images/sprites making it look realistic, maybe even having animated ones. -> ???
 - Money being able to upgrade at least one appliance (makes it faster) 
 - drag & drop system for assembly
 - Two different screens (grill/assembly) --> done
