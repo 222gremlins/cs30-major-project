@@ -428,7 +428,7 @@ function mousePressed() {
     //     producePicked = "";
     //     choppingProgress = 0;
     //   }
-    // }
+    // } uh
   }
 
   if (state === "grill"){
