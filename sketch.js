@@ -17,8 +17,8 @@ const GRILL_Y = 200;
 const SLOT_SIZE = 120;
 
 //undo buttons for assembly
-const UNDO_X = 650;
-const UNDO_Y = 700;
+const UNDO_X = 1350;
+const UNDO_Y = 100;
 const UNDO_W = 200;
 const UNDO_H = 60;
 
@@ -314,6 +314,7 @@ function drawState() {
     setupAssembly();
     drawSauces();
     circle(966, 650, 5);
+    drawUndoButton();
   }
   if (state === "grill"){
     imageMode(CORNER);
@@ -533,14 +534,14 @@ function checkHover() {
     // }
     // if (state === "assembly"){
                             
-  } 
+  }
 }
-                      
+
 function mouseHover(x, y, w, h) {
   return mouseX > x && mouseX < x + w &&
-                        mouseY > y && mouseY < y + h;
+         mouseY > y && mouseY < y + h;
 }
-                      
+
 function displayText() {
   if (state === "tutorial") {
     makeTextNice("#F69F95", CENTER, 32);
@@ -550,7 +551,7 @@ function displayText() {
     text("King's Burgeria", GAME_WIDTH/2, BUTTON_HEIGHT+50);
   }
 }
-                      
+
 function drawNavBar() {
   if (state !== "start") {
     let buttonWidth = GAME_WIDTH / NAV_BUTTONS.length;
