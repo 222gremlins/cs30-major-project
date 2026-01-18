@@ -1,0 +1,64 @@
+const PRODUCE_TRAYS = [
+  { item: "lettuce", x: 20 },
+  { item: "tomato",  x: GAME_WIDTH/4 + 20 },
+  { item: "onion",   x: GAME_WIDTH/2 + 20 },
+  { item: "pickle",  x: GAME_WIDTH - GAME_WIDTH/4 + 20 }
+];
+
+//produce minigame variables
+let chopTargets = [];
+let inChopGame = false;
+let chopItem = "";
+let chopsNeeded = 0;
+
+// chopping variables
+let choppingProgress = 0;
+let producePicked = "";
+
+let lettuceChop, tomatoChop, onionChop, pickleChop;
+
+function getProduceImage(item) {
+  if (item === "lettuce") {
+    return lettuce;
+  }
+  if (item === "tomato") {
+    return tomato;
+  }
+  if (item === "onion") {
+    return onion;
+  }
+  if (item === "pickle") {
+    return pickle;
+  }
+}
+
+function finishChopping() {
+  if (producePicked === "lettuce") {
+    lettuceStock++;
+  } 
+  if (producePicked === "tomato") {
+    tomatoStock++;
+  }
+  if (producePicked === "onion") {
+    onionStock++;
+  }
+  if (producePicked === "pickle") {
+    pickleStock++;
+  }
+  click.play();
+  chopItem = "";
+  inChopGame = false;
+  chopTargets = [];
+}
+function addToBurger(item) {
+  burgerStack.push(item);
+}
+
+function spawnTargets() {
+  chopTargets = [];
+  for (let i = 0; i < 4; i++) {
+    let targetX = random(200, GAME_WIDTH - 200);
+    let targetY = random(180, GAME_HEIGHT - NAV_HEIGHT - 150);
+    chopTargets.push({x: targetX, y: targetY, size: 80});
+  }
+}
