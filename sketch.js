@@ -116,7 +116,7 @@ let bunTop;
 // toppings
 let pickle, cheese, tomato, onion, lettuce;
 let pickleStock = 0;
-let cheeseStock = 0;
+let cheeseStock;
 let tomatoStock = 0;
 let lettuceStock = 0;
 let onionStock = 0;
@@ -129,6 +129,7 @@ let thinkingMonkey, son, tim, john, babySun;
 
 // sound effects
 let click, backgroundMusic, sizzle, sauceSqueeze;
+let grillIsSizzling = false;
 
 let isHovered = false;
 let heldItem = 0; //null if no item is held
@@ -300,10 +301,15 @@ function preload() {
 
   // sound effects
   click = loadSound("assets/click.mp3");
+  sizzle = loadSound("assets/sizzle.mp3");
+  backgroundMusic = loadSound("assets/backgroundmusic.mp3");
+  sauceSqueeze = loadSound("assets/saucesqueeze.mp3");
 }
 
 function setup() {
   createCanvas(GAME_WIDTH, GAME_HEIGHT);
+  backgroundMusic.setLoop(true);
+  backgroundMusic.play();
   setupGrillSlots();
   customerImages = [thinkingMonkey, son];
   currentCustomer = new Customer();
@@ -420,7 +426,7 @@ function drawState() {
         fill(255);
         textSize(14);
         textAlign(CENTER, CENTER);
-        text("Buy Slot for $", slot.x + 60, slot.y + 60);
+        text("Buy Slot for 25$", slot.x + 60, slot.y + 60);
       }
       
       if (slot.patty) {
@@ -431,9 +437,18 @@ function drawState() {
     if (!grillUpgraded) {
       rect(1000, 100, 300, 80, 15);
       makeTextNice(0, CENTER, 22);
-      text("Upgrade Grill ($50)", 1150, 130);
+      text("Upgrade Cook Speed($50)", 1150, 130);
       fill("red");
-      circle(1465, 700, 6);
+    }
+    let anyPatty = false;
+    for (let slot of grillSlots) {
+      if (slot.patty) {
+        anyPatty = true;
+    }
+  }
+    if (!anyPatty && grillIsSizzling) {
+      sizzle.stop();
+      grillIsSizzling = false;
     }
   }
   if (state === "produce") {
@@ -559,8 +574,13 @@ function mousePressed() {
       if (slot){
         slot.patty = new Patty(slot);
         click.play();
+        if (!grillIsSizzling) {
+          sizzle.loop();
+          grillIsSizzling = true;
+        }
       }
     }
+  }
     for (let slot of grillSlots) {
       if (slot.locked && mouseHover(slot.x, slot.y, SLOT_SIZE, SLOT_SIZE)) {
         if (money >= slotCost) {
@@ -601,7 +621,6 @@ function mousePressed() {
         click.play();
       }
     }
-  }
               
   if (state === "assembly") {
     for (let item of assemblyItems) {
@@ -652,9 +671,8 @@ function mousePressed() {
         click.play();
         return;
       }
-      if (item.name === "cheese" && cheeseStock > 0) {
+      if (item.name === "cheese") {
         burgerStack.push("cheese");
-        cheeseStock--;
         click.play();
         return;
       }
@@ -677,6 +695,18 @@ function mousePressed() {
     if (mouseY > height - NAV_HEIGHT) {
       let index = floor(mouseX/(GAME_WIDTH/NAV_BUTTONS.length));
       state = NAV_BUTTONS[index];
+      if (state !== "grill" && grillIsSizzling) {
+        sizzle.stop();
+        grillIsSizzling = false;
+      }
+      if (state === "grill") {
+        for (let slot of grillSlots) {
+          if (slot.patty) {
+            sizzle.loop();
+            grillIsSizzling = true;
+          }
+        }
+      }
     }
   }
   if (state === "register") {
@@ -723,7 +753,7 @@ function mouseReleased() {
       x: mouseX,
       y: mouseY
   });
-    click.play();
+    sauceSqueeze.play();
   }
  sauceBeingDragged = "";
 }
@@ -918,9 +948,6 @@ function undoPressed() {
       else if (removedItem === "pickle") {
         pickleStock++;
       }
-      else if (removedItem === "cheese") {
-        cheeseStock++;
-      }
       else if (removedItem === "patty") {
         perfectPatties++;
       }
@@ -963,6 +990,12 @@ function drawReceipt() {
   for (let i = 0; i < burgerStack.length; i++) {
     text("- " + burgerStack[i], GAME_WIDTH - 360, y + 30 + i * 22);
   }
+  let sauceY = y + 30 + burgerStack.length * 22;
+
+  for (let sauce of sauceLayers) {
+    text("- " + sauce.type, GAME_WIDTH - 360, sauceY);
+    sauceY += 22;
+  }
 }
 
 function drawMoney() {
@@ -984,7 +1017,7 @@ function getStock(item) {
     return pickleStock;
   }
   if (item === "cheese") {
-    return cheeseStock;
+    return "unlimited";
   }
   if (item === "patty") {
     return perfectPatties;
@@ -1071,6 +1104,11 @@ function rateBurger(customer, burger) {
 
   for (let item of burger) {
     if (customer.order.includes(item)) {
+      correct++;
+    }
+  }
+  for (let sauce of sauceLayers) {
+    if (customer.order.includes(sauce.type)) {
       correct++;
     }
   }
