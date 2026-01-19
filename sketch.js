@@ -299,11 +299,11 @@ function setup() {
   customerImages = [thinkingMonkey, son];
   currentCustomer = new Customer();
   sauces = [
-  { name: "ketchup", img: ketchup, x: 1215, y: 600 },
-  { name: "mustard", img: mustard, x: 1335, y: 600 },
-  { name: "mayo", img: mayo, x: 1445, y: 600 },
-  { name: "bbq sauce", img: bbq, x: 1555, y: 600 }
-];
+    { name: "ketchup", img: ketchup, x: 1215, y: 600 },
+    { name: "mustard", img: mustard, x: 1335, y: 600 },
+    { name: "mayo", img: mayo, x: 1445, y: 600 },
+    { name: "bbq sauce", img: bbq, x: 1555, y: 600 }
+  ];
 }
 function draw() {
   background(220);
@@ -432,9 +432,9 @@ function drawState() {
     for (let slot of grillSlots) {
       if (slot.patty) {
         anyPatty = true;
+      }
     }
-  }
-  // stops sizzle sound if no patties are on grill
+    // stops sizzle sound if no patties are on grill
     if (!anyPatty && grillIsSizzling) {
       sizzle.stop();
       grillIsSizzling = false;
@@ -446,25 +446,25 @@ function drawState() {
     //trays
     fill("gray");
     for (let tray of PRODUCE_TRAYS) {
-    fill("white");
-    rect(tray.x, 20, GAME_WIDTH/4 - 40, GAME_HEIGHT/2 - 40, 20);
+      fill("white");
+      rect(tray.x, 20, GAME_WIDTH/4 - 40, GAME_HEIGHT/2 - 40, 20);
 
-    // tray item text and image
-    makeTextNice(0, CENTER, 28);
-    text(tray.item.toUpperCase(), tray.x + (GAME_WIDTH/8) - 20, 60);
-    let img = getProduceImage(tray.item);
-    if (img) {
-      imageMode(CENTER);
-      image(
-        img,
-        tray.x + (GAME_WIDTH/8) - 20,
-        GAME_HEIGHT/4 + 30,
-        120,
-        120
-      );
-      imageMode(CORNER);
+      // tray item text and image
+      makeTextNice(0, CENTER, 28);
+      text(tray.item.toUpperCase(), tray.x + GAME_WIDTH/8 - 20, 60);
+      let img = getProduceImage(tray.item);
+      if (img) {
+        imageMode(CENTER);
+        image(
+          img,
+          tray.x + GAME_WIDTH/8 - 20,
+          GAME_HEIGHT/4 + 30,
+          120,
+          120
+        );
+        imageMode(CORNER);
+      }
     }
-  }
     // chopping game
     if (inChopGame) {
       imageMode(CORNER);
@@ -487,9 +487,9 @@ function drawState() {
       }
       imageMode(CENTER);
       for (let target of chopTargets) {
-       image(img, target.x, target.y, target.size, target.size);
+        image(img, target.x, target.y, target.size, target.size);
       }   
-    imageMode(CORNER);
+      imageMode(CORNER);
     }
   }
 }
@@ -613,33 +613,33 @@ function mousePressed() {
           click.play();
           return;
         }
-      if (item.name === "tomato" && tomatoStock > 0) {
-        burgerStack.push("tomato");
-        tomatoStock--;
-        click.play();
-        return;
+        if (item.name === "tomato" && tomatoStock > 0) {
+          burgerStack.push("tomato");
+          tomatoStock--;
+          click.play();
+          return;
+        }
+        if (item.name === "onion" && onionStock > 0) {
+          burgerStack.push("onion");
+          onionStock--;
+          click.play();
+          return;
+        }
+        if (item.name === "pickle" && pickleStock > 0) {
+          burgerStack.push("pickle");
+          pickleStock--;
+          click.play();
+          return;
+        }
+        if (item.name === "cheese") {
+          burgerStack.push("cheese");
+          click.play();
+          return;
+        }
       }
-      if (item.name === "onion" && onionStock > 0) {
-        burgerStack.push("onion");
-        onionStock--;
-        click.play();
-        return;
-      }
-      if (item.name === "pickle" && pickleStock > 0) {
-        burgerStack.push("pickle");
-        pickleStock--;
-        click.play();
-        return;
-      }
-      if (item.name === "cheese") {
-        burgerStack.push("cheese");
-        click.play();
-        return;
-      }
-    }
-    //sauce bottles being clicked and dragged
-    for (let sauce of sauces) {
-      if (mouseX > sauce.x - 50 &&
+      //sauce bottles being clicked and dragged
+      for (let sauce of sauces) {
+        if (mouseX > sauce.x - 50 &&
         mouseX < sauce.x + 50 &&
         mouseY > sauce.y - 150 &&
         mouseY < sauce.y + 150){
@@ -707,7 +707,9 @@ function mouseDragged() {
 }
 
 function mouseReleased() {
-  if (!sauceBeingDragged) return;
+  if (!sauceBeingDragged) {
+    return;
+  }
   // this makes the sauce land exactly where the mouse dropped it
   let distance = dist(mouseX, mouseY, BURGER_X, BURGER_Y);
   if (distance < 120) {
@@ -766,7 +768,7 @@ function drawNavBar() {
 // draws each assembly item with its stock
 function drawAssembly() { 
   fill(0);
-  rect(0,0, 530, GAME_HEIGHT)
+  rect(0,0, 530, GAME_HEIGHT);
   assemblyItems = [];
   const COLUMN_GAP = ITEM_SIZE + 40;
   const ITEMS_PER_COLUMN = 4;
@@ -1094,8 +1096,8 @@ function drawAssemblyItem(img, x, y, stock) {
   }
 
   text(displayStock, x + ITEM_SIZE - 15, y + ITEM_SIZE - 15);
-    textAlign(LEFT);
-  }
+  textAlign(LEFT);
+}
 
 // draws the sauce bottles in assembly state
 function drawSauces() {
