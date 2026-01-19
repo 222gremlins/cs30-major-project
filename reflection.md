@@ -2,7 +2,7 @@
 
 ## What advice would you give to yourself if you were to start a project like this again?
 I think that I thought it would be way simpler than the project actually was and then got frazzled when I ran into small errors or bugs, I would focus on getting the basics done before trying to make it look pretty/more complicated. Also I would have been more orgaized from the start and maybe seperated my files earlier.
--DON'T spend all of your time on the grill because you dont know how to do it, focus on others things and actually get them done so when it is one week from the due date you aren't scrambling...
+- DON'T spend all of your time on the grill because you dont know how to do it, focus on others things and actually get them done so when it is one week from the due date you aren't scrambling...
 
 ## Did you complete everything in your needs to have list?
 I did complete everything I put in my needs to have save for some introductory dialogue but I made the sound effects a lot ooler so thats what I spent my time on and I am proud of the sizzling on the grill stopping when you go to other tabs.
