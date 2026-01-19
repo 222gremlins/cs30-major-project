@@ -7,7 +7,7 @@
 - 3 different orders
 - At least different parts of assembly Cutting, Cooking, Assembling all in one screen --> done
 - Working click the item and it automatically goes onto burger --> done
-- Some form of introductory dialogue and sound effects. 
+- Some form of sound effects. 
 
 
 ## Nice to Have
