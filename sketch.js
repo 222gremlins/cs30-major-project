@@ -172,7 +172,7 @@ class Customer {
     for (let i = 0; i < extraCount; i++) {
       order.push(extras[i]);
     }
-    // 70% chance of sauce on the order
+    // 70% chance of sauce on the order.. doesnt include 1 so maybe not
     if (random() < 0.7) {
       order.push(random(sauces));
     }
@@ -505,6 +505,7 @@ function mousePressed() {
     if (inChopGame) {
       for (let i = chopTargets.length - 1; i >= 0; i--) {
         let target = chopTargets[i];
+        //since they are all basically circles the dist works because it measures from center to center
         if (dist(mouseX, mouseY, target.x, target.y) < target.size / 2) {
           chopTargets.splice(i, 1);
           click.play();
@@ -542,8 +543,8 @@ function mousePressed() {
     }
   }
   for (let slot of grillSlots) {
-    if (slot.locked && mouseHover(slot.x, slot.y, SLOT_SIZE, SLOT_SIZE) && state !== "start") {
-      if (money >= slotCost) {
+    if (slot.locked && mouseHover(slot.x, slot.y, SLOT_SIZE, SLOT_SIZE)) {
+      if (money >= slotCost && state !== "start") {
         money -= slotCost;
         slot.locked = false;
         unlockedSlots++;
@@ -1065,7 +1066,7 @@ function rateBurger(customer, burger) {
   if (accuracy >= 0.4) {
     return { stars: 2, text: "Meh…" };
   }
-  return { stars: 1, text: "Terrible" };
+  return { stars: 1, text: "Horrid!" };
 }
 
 // draws each assembly item with its stock badge
@@ -1083,10 +1084,18 @@ function drawAssemblyItem(img, x, y, stock) {
   fill(255);
   textAlign(CENTER, CENTER);
   textSize(16);
-  text(stock === "unlimited" ? "∞" : stock, x + ITEM_SIZE - 15, y + ITEM_SIZE - 15);
+  let displayStock;
 
-  textAlign(LEFT);
-}
+  if (stock === "unlimited") {
+    displayStock = "∞";
+  }
+  else {
+    displayStock = stock;
+  }
+
+  text(displayStock, x + ITEM_SIZE - 15, y + ITEM_SIZE - 15);
+    textAlign(LEFT);
+  }
 
 // draws the sauce bottles in assembly state
 function drawSauces() {
