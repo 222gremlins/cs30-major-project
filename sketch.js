@@ -145,7 +145,7 @@ class Customer {
   constructor() {
     this.order = this.generateOrder();
     this.image = random(customerImages);
-    this.dialogue = random(["I'd like a burger, please!", "Can I get a burger?", "Make me a burger!", "I'm hungry for a burger!", "Smells good! I'll have a burger!"]);
+    // this.dialogue = random(["I'd like a burger, please!", "Can I get a burger?", "Make me a burger!", "I'm hungry for a burger!", "Smells good! I'll have a burger!"]);
   }
   draw(x, y) {
     imageMode(CENTER);
